@@ -23,7 +23,6 @@ function vendorCtrl($scope, $stateParams, $timeout, dbModel, data) {
         if (data.data.category === "vendors") {
             $scope.vendors = data.data.vendors;
         }
-
     }
 
     $scope.getVendor = function (id) {
