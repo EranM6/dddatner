@@ -1,0 +1,26 @@
+<nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">ddDatner</a>
+        </div>
+        <ul ng-if="GOD" class="nav navbar-nav">
+            <li class="active" ui-sref='.index'><a href="#">Home</a></li>
+            <li class="dropdown" ng-repeat="business in location">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">{{ business.displayName | capitalize }}
+                    <span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                    <li ui-sref='.place.vendors({codeName: "{{ business.codeName}}", displayName: "{{ business.displayName}}"})'><a href="#">ספקים</a></li>
+                    <li ui-sref='.place.inventory({codeName: "{{ business.codeName}}", displayName: "{{ business.displayName}}"})'><a href="#">ספירות מלאי</a></li>
+                    <li ui-sref='.place.productTree({codeName: "{{ business.codeName}}", displayName: "{{ business.displayName}}"})'><a href="#">עץ מוצר</a></li>
+                </ul>
+            </li>
+        </ul>
+        <ul ng-if="!GOD" class="nav navbar-nav">
+            <li class="active" ui-sref='.index'><a href="#">{{ location.displayName | capitalize }}</a></li>
+            <li ui-sref='.place.vendors({codeName: "{{ location.codeName}}", displayName: "{{ location.displayName}}"})'><a href="#">ספקים</a></li>
+            <li ui-sref='.place.inventory({codeName: "{{ location.codeName}}", displayName: "{{ location.displayName}}"})'><a href="#">ספירות מלאי</a></li>
+            <li ui-sref='.place.productTree({codeName: "{{ location.codeName}}", displayName: "{{ location.displayName}}"})'><a href="#">עץ מוצר</a></li>
+        </ul>
+    </div>
+</nav>
+<div ui-view></div>
