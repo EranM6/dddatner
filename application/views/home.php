@@ -17,7 +17,6 @@ header("Pragma: no-cache");
 		  integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 	<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.css">
 	<link href="./public/css/style.css" rel="stylesheet">
-	<link href="./public/css/loaders.css" rel="stylesheet">
 	<style>
 		ng\:cloak, ng-cloak, .ng-cloak {
 			display: none !important;

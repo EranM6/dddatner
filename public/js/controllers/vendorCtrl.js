@@ -9,6 +9,7 @@ function vendorCtrl($scope, $stateParams, $timeout, dbModel, data) {
     $scope.loading = false;
     $scope.activeVendorId = null;
     $scope.vendorNewInfo = null;
+    $scope.newVendorInfo = null;
     var currentData = {
         info: null,
         products: null
@@ -27,17 +28,18 @@ function vendorCtrl($scope, $stateParams, $timeout, dbModel, data) {
 
     $scope.getVendor = function (id) {
         var mainTab = jQuery(document).find('.md-tab.ng-scope.ng-isolate-scope.md-ink-ripple')[0];
-        $timeout(function() {
+        $timeout(function () {
             angular.element(mainTab).triggerHandler('click');
         });
         $scope.toggleListItem = {item: id};
         $scope.activeVendorId = id;
         dbModel.getVendor(place, id)
             .then(function (data) {
-
                     $scope.vendorInfo = data.data.vendor;
                     currentData.info = id;
-                    $scope.loading = false;
+                    $timeout(function () {
+                        $scope.loading = false;
+                    }, 1000)
                 }
             )
             .catch(function (err) {
@@ -47,23 +49,87 @@ function vendorCtrl($scope, $stateParams, $timeout, dbModel, data) {
         $scope.loading = true;
     };
 
-    $scope.editVendor = function(){
+    $scope.addVendor = function () {
+        $scope.newVendorInfo = {
+            name: null,
+            agent: {
+                name: null,
+                phoneNumber: null
+            },
+            driver: {
+                name: null,
+                phoneNumber: null
+            },
+            orders: {
+                phoneNumber: null,
+                minimum: null
+            },
+            discount: null
+        };
+
+        jQuery("#vendorModal").modal('show');
+    };
+
+    $scope.cancelAddVendor = function () {
+        $scope.newVendorInfo = null;
+        jQuery("#vendorModal").modal('hide');
+    };
+
+    $scope.saveAddVendor = function () {
+        $scope.loading = true;
+        dbModel.addVendor(place, $scope.newVendorInfo)
+            .then(function (data) {
+                    var newId = data.data.newId;
+                console.log(newId);
+                $scope.vendors[newId] = $scope.newVendorInfo.name;
+                    $scope.newVendorInfo = null;
+                    jQuery("#vendorModal").modal('hide');
+                    console.log($scope.vendors);
+                }
+            )
+            .catch(function (err) {
+                    console.log(err);
+                }
+            )
+            .finally(function () {
+                    $timeout(function () {
+                        $scope.loading = false;
+                    }, 3000)
+                }
+            )
+    };
+
+    $scope.editVendor = function () {
         $scope.editMode = true;
         $scope.vendorNewInfo = angular.copy($scope.vendorInfo);
-        console.log($scope.vendorNewInfo);
     };
 
-    $scope.cancelEditVendor = function(){
+    $scope.cancelEditVendor = function () {
         $scope.editMode = false;
         $scope.vendorNewInfo = null;
     };
 
-    $scope.saveEditVendor = function(){
-        $scope.editMode = false;
-        $scope.vendorInfo = angular.copy($scope.vendorNewInfo);
-        $scope.vendorNewInfo = null;
+    $scope.saveEditVendor = function () {
         $scope.loading = true;
-        console.log($scope.vendorInfo);
+        if (valid($scope.vendorInfo, $scope.vendorNewInfo)) {
+            dbModel.updateVendor(place, $scope.vendorNewInfo)
+                .then(function (status) {
+                        $scope.vendorInfo = angular.copy($scope.vendorNewInfo);
+                        $scope.vendorNewInfo = null;
+                        $scope.editMode = false;
+                    }
+                )
+                .catch(function (err) {
+                        console.log(err);
+                    }
+                )
+                .finally(function () {
+                        $timeout(function () {
+                            $scope.loading = false;
+                        }, 3000)
+                    }
+                )
+        }
     };
 
     $scope.getProductsByVendor = function () {
@@ -84,5 +150,9 @@ function vendorCtrl($scope, $stateParams, $timeout, dbModel, data) {
                 );
             $scope.loading = true;
         }
+    };
+
+    var valid = function (oldObject, newObject) {
+        return true;
     }
 }

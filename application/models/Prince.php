@@ -23,6 +23,14 @@ class Prince extends Place {
 		return parent::_getVendor($id, self::$_conn);
 	}
 
+	static function addVendor($data) {
+		return parent::_addVendor($data, self::$_conn);
+	}
+
+	static function updateVendor($id, $data) {
+		return parent::_updateVendor($id, $data, self::$_conn);
+	}
+
 	static function getProductsByVendor($id) {
 		return parent::_getProductsByVendor($id, self::$_conn);
 	}

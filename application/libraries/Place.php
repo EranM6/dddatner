@@ -54,6 +54,21 @@ abstract class Place {
 		return $results;
 	}
 
+	protected static function _addVendor($data, $conn) {
+
+		$conn->insert('vendors', $data);
+
+		return ['newId' => $conn->insert_id()];
+	}
+
+	protected static function _updateVendor($id, $data, $conn) {
+
+		$where = "id = {$id}";
+		$query = $conn->update('vendors', $data, $where);
+
+		return $query;
+	}
+
 	protected static function _getProductsByVendor($id, $conn) {
 
 		$sql = "SELECT * FROM products WHERE vendorId = (".$conn->escape($id).")";

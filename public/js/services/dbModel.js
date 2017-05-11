@@ -17,6 +17,12 @@ function dbModelFunction($http) {
         getVendor: function (place, id) {
             return $http.get(urlBase + place + "Controller/getVendor/" + id)
         },
+        addVendor: function (place, data) {
+            return $http.post(urlBase + place + "Controller/addVendor/" , data)
+        },
+        updateVendor: function (place, data) {
+            return $http.post(urlBase + place + "Controller/updateVendor/" , data)
+        },
         getProductsByVendor: function (place, id) {
             return $http.get(urlBase + place + "Controller/getProductsByVendor/" + id)
         }

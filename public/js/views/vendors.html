@@ -10,19 +10,88 @@
            data-ng-class="{'active' : toggleListItem.item == key}">
             {{ value }}
         </a>
+        <button class="btn btn-success btn-block" type="button" ng-click="addVendor()">הוסף ספק חדש</button>
     </div>
-    <div class="col-md-9 col-sm-12 col-md-pull-3" ng-show="activeVendorId">
-    <div class="loader" ng-show="loading">
-        <div id="fountainTextG">
-            <div id="fountainTextG_1" class="fountainTextG">L</div>
-            <div id="fountainTextG_2" class="fountainTextG">o</div>
-            <div id="fountainTextG_3" class="fountainTextG">a</div>
-            <div id="fountainTextG_4" class="fountainTextG">d</div>
-            <div id="fountainTextG_5" class="fountainTextG">i</div>
-            <div id="fountainTextG_6" class="fountainTextG">n</div>
-            <div id="fountainTextG_7" class="fountainTextG">g</div>
+    <div id="vendorModal" class="modal fade" data-backdrop="static" data-keyboard="false" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">{{ name }} - הוספת ספק חדש</h4>
+                </div>
+                <div class="modal-body clearfix">
+                    <form novalidate>
+                        <div class="col-md-12 col-sm-12">
+                            <h4>
+                                <span>שם הספק</span>
+                                <span>:</span>
+                                <input class="inputField" type="text" ng-model="newVendorInfo.name">
+                            </h4>
+                        </div>
+                        <div class="col-md-4 col-sm-12 col-md-push-8 ">
+                            <h4>סוכן/ת</h4>
+                            <p>
+                                <span>שם</span>
+                                <span>:</span>
+                                <input class="inputField" type="text" ng-model="newVendorInfo.agent.name">
+                            </p>
+                            <p>
+                                <span>טלפון</span>
+                                <span>:</span>
+                                <input class="inputField" type="text" ng-model="newVendorInfo.agent.phoneNumber">
+                            </p>
+                        </div>
+                        <div class="col-md-4 col-sm-12">
+                            <h4>נהג/ת</h4>
+                            <p>
+                                <span>שם</span>
+                                <span>:</span>
+                                <input class="inputField" type="text" ng-model="newVendorInfo.driver.name">
+                            </p>
+                            <p>
+                                <span>טלפון</span>
+                                <span>:</span>
+                                <input class="inputField" type="text" ng-model="newVendorInfo.driver.phoneNumber">
+                            </p>
+                        </div>
+                        <div class="col-md-4 col-sm-12 col-md-pull-8">
+                            <h4>מוקד הזמנות</h4>
+                            <p>
+                                <span>טלפון</span>
+                                <span>:</span>
+                                <input class="inputField" type="text" ng-model="newVendorInfo.orders.phoneNumber">
+                            </p>
+                            <p>
+                                <span>מינימום הזמנה</span>
+                                <span>:</span>
+                                <input class="inputField" type="text" ng-model="newVendorInfo.orders.minimum">
+                            </p>
+                        </div>
+                        <div class="col-md-12 col-sm-12">
+                            <h4>
+                                <span>הנחה</span>
+                                <span>:</span>
+                                <input class="inputField" type="text" ng-model="newVendorInfo.discount">
+                            </h4>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <div class="btn-group btn-group-justified" style="direction: ltr;">
+                        <a href="#" class="btn btn-success" ng-click="saveAddVendor()">שמור</a>
+                        <a href="#" class="btn btn-danger" ng-click="cancelAddVendor()">ביטול</a>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
+
+    <div class="col-md-9 col-sm-12 col-md-pull-3" ng-show="activeVendorId">
+
+        <div class="loader" ng-show="loading"></div>
         <div ng-cloak>
             <md-content>
                 <md-tabs md-dynamic-height md-border-bottom>
@@ -77,8 +146,8 @@
                                         <span>מינימום הזמנה</span>
                                         <span>:</span>
                                         <input class="inputField" type="text" ng-model="vendorNewInfo.orders.minimum" ng-show="vendorNewInfo">
-                                        <span ng-hide="editMode">{{ vendorInfo.orders.minimum }}</span>
-                                        <span class="missingInfo" ng-hide="editMode || vendorInfo.orders.minimum">אין מינימום הזמנה</span>
+                                        <span ng-hide="editMode || vendorInfo.orders.minimum < 1">{{ vendorInfo.orders.minimum }}</span>
+                                        <span class="missingInfo" ng-hide="editMode || vendorInfo.orders.minimum > 0">אין מינימום הזמנה</span>
                                     </p>
                                 </div>
                                 <div class="col-md-12 col-sm-12">

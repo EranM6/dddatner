@@ -29,3 +29,6 @@ user_guide_src/cilexer/pycilexer.egg-info/*
 *.sublime-project
 
 node_modules/
+application/config/database.php
+.htaccess
+.idea/
