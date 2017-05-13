@@ -17,167 +17,47 @@
 
             <!-- Modal content-->
             <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">{{ name }} - הוספת ספק חדש</h4>
-                </div>
-                <div class="modal-body clearfix">
-                    <form novalidate>
-                        <div class="col-md-12 col-sm-12">
-                            <h4>
-                                <span>שם הספק</span>
-                                <span>:</span>
-                                <input class="inputField" type="text" ng-model="newVendorInfo.name">
-                            </h4>
-                        </div>
-                        <div class="col-md-4 col-sm-12 col-md-push-8 ">
-                            <h4>סוכן/ת</h4>
-                            <p>
-                                <span>שם</span>
-                                <span>:</span>
-                                <input class="inputField" type="text" ng-model="newVendorInfo.agent.name">
-                            </p>
-                            <p>
-                                <span>טלפון</span>
-                                <span>:</span>
-                                <input class="inputField" type="text" ng-model="newVendorInfo.agent.phoneNumber">
-                            </p>
-                        </div>
-                        <div class="col-md-4 col-sm-12">
-                            <h4>נהג/ת</h4>
-                            <p>
-                                <span>שם</span>
-                                <span>:</span>
-                                <input class="inputField" type="text" ng-model="newVendorInfo.driver.name">
-                            </p>
-                            <p>
-                                <span>טלפון</span>
-                                <span>:</span>
-                                <input class="inputField" type="text" ng-model="newVendorInfo.driver.phoneNumber">
-                            </p>
-                        </div>
-                        <div class="col-md-4 col-sm-12 col-md-pull-8">
-                            <h4>מוקד הזמנות</h4>
-                            <p>
-                                <span>טלפון</span>
-                                <span>:</span>
-                                <input class="inputField" type="text" ng-model="newVendorInfo.orders.phoneNumber">
-                            </p>
-                            <p>
-                                <span>מינימום הזמנה</span>
-                                <span>:</span>
-                                <input class="inputField" type="text" ng-model="newVendorInfo.orders.minimum">
-                            </p>
-                        </div>
-                        <div class="col-md-12 col-sm-12">
-                            <h4>
-                                <span>הנחה</span>
-                                <span>:</span>
-                                <input class="inputField" type="text" ng-model="newVendorInfo.discount">
-                            </h4>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <div class="btn-group btn-group-justified" style="direction: ltr;">
-                        <a href="#" class="btn btn-success" ng-click="saveAddVendor()">שמור</a>
-                        <a href="#" class="btn btn-danger" ng-click="cancelAddVendor()">ביטול</a>
-                    </div>
-                </div>
+                <vendor-modal-directive ng-if="modalObject === 'vendor'"></vendor-modal-directive>
+                <product-modal-directive ng-if="modalObject === 'product'"></product-modal-directive>
             </div>
-
         </div>
     </div>
 
     <div class="col-md-9 col-sm-12 col-md-pull-3" ng-show="activeVendorId">
 
-        <div class="loader" ng-show="loading"></div>
+        <div class="loader" ng-show="loading"><div></div></div>
         <div ng-cloak>
             <md-content>
                 <md-tabs md-dynamic-height md-border-bottom>
                     <md-tab label="כללי">
                         <md-content class="md-padding row">
-                            <form novalidate>
-                                <h1 class="md-display-2">פרטי התקשרות</h1>
-                                <div class="col-md-4 col-sm-12 col-md-push-8 ">
-                                    <h4>סוכן/ת</h4>
-                                    <p>
-                                        <span>שם</span>
-                                        <span>:</span>
-                                        <input class="inputField" type="text" ng-model="vendorNewInfo.agent.name" ng-show="vendorNewInfo">
-                                        <span ng-hide="editMode">{{ vendorInfo.agent.name }}</span>
-                                        <span class="missingInfo" ng-hide="editMode || vendorInfo.agent.name">חסר</span>
-                                    </p>
-                                    <p>
-                                        <span>טלפון</span>
-                                        <span>:</span>
-                                        <input class="inputField" type="text" ng-model="vendorNewInfo.agent.phoneNumber" ng-show="vendorNewInfo">
-                                        <span ng-hide="editMode">{{ vendorInfo.agent.phoneNumber }}</span>
-                                        <span class="missingInfo" ng-hide="editMode || vendorInfo.agent.phoneNumber">חסר</span>
-                                    </p>
-                                </div>
-                                <div class="col-md-4 col-sm-12">
-                                    <h4>נהג/ת</h4>
-                                    <p>
-                                        <span>שם</span>
-                                        <span>:</span>
-                                        <input class="inputField" type="text" ng-model="vendorNewInfo.driver.name" ng-show="vendorNewInfo">
-                                        <span ng-hide="editMode">{{ vendorInfo.driver.name }}</span>
-                                        <span class="missingInfo" ng-hide="editMode || vendorInfo.driver.name">חסר</span>
-                                    </p>
-                                    <p>
-                                        <span>טלפון</span>
-                                        <span>:</span>
-                                        <input class="inputField" type="text" ng-model="vendorNewInfo.driver.phoneNumber" ng-show="vendorNewInfo">
-                                        <span ng-hide="editMode">{{ vendorInfo.driver.phoneNumber }}</span>
-                                        <span class="missingInfo" ng-hide="editMode || vendorInfo.driver.phoneNumber">חסר</span>
-                                    </p>
-                                </div>
-                                <div class="col-md-4 col-sm-12 col-md-pull-8">
-                                    <h4>מוקד הזמנות</h4>
-                                    <p>
-                                        <span>טלפון</span>
-                                        <span>:</span>
-                                        <input class="inputField" type="text" ng-model="vendorNewInfo.orders.phoneNumber" ng-show="vendorNewInfo">
-                                        <span ng-hide="editMode">{{ vendorInfo.orders.phoneNumber }}</span>
-                                        <span class="missingInfo" ng-hide="editMode || vendorInfo.orders.phoneNumber">חסר</span>
-                                    </p>
-                                    <p>
-                                        <span>מינימום הזמנה</span>
-                                        <span>:</span>
-                                        <input class="inputField" type="text" ng-model="vendorNewInfo.orders.minimum" ng-show="vendorNewInfo">
-                                        <span ng-hide="editMode || vendorInfo.orders.minimum < 1">{{ vendorInfo.orders.minimum }}</span>
-                                        <span class="missingInfo" ng-hide="editMode || vendorInfo.orders.minimum > 0">אין מינימום הזמנה</span>
-                                    </p>
-                                </div>
-                                <div class="col-md-12 col-sm-12">
-                                    <h4>
-                                        <span>הנחה</span>
-                                        <span>:</span>
-                                        <input class="inputField" type="text" ng-model="vendorNewInfo.discount" ng-show="vendorNewInfo">
-                                        <span ng-hide="editMode || vendorInfo.discount < 1">{{ vendorInfo.discount }}%</span>
-                                        <span class="missingInfo" ng-hide="editMode || vendorInfo.discount > 0">אין</span>
-                                    </h4>
-                                </div>
-                                <button type="button" class="btn btn-info btn-block" ng-click="editVendor()" ng-show="!editMode">ערוך פרטים</button>
-                                <div class="btn-group btn-group-justified" style="direction: ltr;" ng-show="editMode">
-                                    <a href="#" class="btn btn-success" ng-click="saveEditVendor()">שמור</a>
-                                    <a href="#" class="btn btn-danger" ng-click="cancelEditVendor()">ביטול</a>
-                                </div>
-                            </form>
+                            <vendor-info-directive></vendor-info-directive>
                         </md-content>
                     </md-tab>
                     <md-tab label="מוצרים" ng-click="getProductsByVendor()">
                         <md-content class="md-padding">
-                            <h1 class="md-display-2">קטלוג מוצרים / מחירון</h1>
-                            <div class="col-md-4 col-sm-12" ng-repeat="(key, value) in vendorProducts"
-                                 index="{{ key }}">
-                                <span>{{ value.name }}</span>
-                                <span> {{ value.price }}</span>
-                                ש"ח
-                                <span ng-if="value.measurement == 'weight'">לקילו</span>
-                                <span ng-if="value.measurement != 'weight'">ליחידה</span>
+                            <h1>קטלוג מוצרים / מחירון</h1>
+                            <div class="row">
+                                <div class="col-md-4 col-sm-12" ng-repeat="(key, value) in vendorProducts" ng-class="{edited: toggleEditedClass[key]}">
+                                        <span>{{ value.name }}</span>
+                                        <span> {{ value.price }}</span>
+                                        ש"ח
+                                        <span ng-if="value.measurement == '1'">לקילו</span>
+                                        <span ng-if="value.measurement == '0'">ליחידה</span>
+                                        <span class="glyphicon glyphicon-edit" ng-click="editProduct(key)"></span>
+                                </div>
+                                <div class="col-md-4 col-sm-12 newProduct" ng-repeat="(key, value) in newProducts">
+                                        <span>{{ value.name }}</span>
+                                        <span> {{ value.price }}</span>
+                                        ש"ח
+                                        <span ng-if="value.measurement == '1'">לקילו</span>
+                                        <span ng-if="value.measurement == '0'">ליחידה</span>
+                                        <span class="glyphicon glyphicon-edit" ng-click="editProduct(key)"></span>
+                                </div>
                             </div>
+                            <new-product-directive ng-show="addProduct"></new-product-directive>
+                            <button type="button" class="btn btn-success btn-block" ng-click="saveNewProducts()" ng-show="newProducts.length > 0 || editedProducts.length > 0">שמור שינויים</button>
+                            <button type="button" class="btn btn-info btn-block" ng-click="addProduct = true" ng-disabled="addProduct">הוסף מוצר</button>
                         </md-content>
                     </md-tab>
                     <md-tab label="חשבוניות / תעודות משלוח">

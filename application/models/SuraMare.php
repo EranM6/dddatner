@@ -2,7 +2,7 @@
 
 require_once __DIR__ . '../../libraries/Place.php';
 
-class Prince extends Place {
+class SuraMare extends Place {
 
 	private static $_conn = null;
 
@@ -10,7 +10,7 @@ class Prince extends Place {
 
 		if (self::$_conn === null) {
 			$CI =& get_instance();
-			self::$_conn = $CI->load->database('prince', TRUE);
+			self::$_conn = $CI->load->database('suraMare', TRUE);
 		}
 	}
 

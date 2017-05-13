@@ -2,23 +2,23 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 
-class PrinceController extends CI_Controller {
+class CuckooNestController extends CI_Controller {
 
 	public function getVendors() {
-		$this->load->model('Prince');
-		$prince = new Prince();
-		echo json_encode($prince::getVendors());
+		$this->load->model('CuckooNest');
+		$cuckooNest = new CuckooNest();
+		echo json_encode($cuckooNest::getVendors());
 	}
 
 	public function getVendor($id) {
-		$this->load->model('Prince');
-		$prince = new Prince();
-		echo json_encode($prince::getVendor($id));
+		$this->load->model('CuckooNest');
+		$cuckooNest = new CuckooNest();
+		echo json_encode($cuckooNest::getVendor($id));
 	}
 
 	public function addVendor() {
-		$this->load->model('Prince');
-		$prince = new Prince();
+		$this->load->model('CuckooNest');
+		$cuckooNest = new CuckooNest();
 
 		$postData = file_get_contents("php://input");
 		$request = json_decode($postData);
@@ -34,12 +34,12 @@ class PrinceController extends CI_Controller {
 			'minimum_order' => $request->orders->minimum.' '
 		];
 
-		echo json_encode($prince::addVendor($data));
+		echo json_encode($cuckooNest::addVendor($data));
 	}
 
 	public function updateVendor() {
-		$this->load->model('Prince');
-		$prince = new Prince();
+		$this->load->model('CuckooNest');
+		$cuckooNest = new CuckooNest();
 
 		$postData = file_get_contents("php://input");
 		$request = json_decode($postData);
@@ -56,18 +56,18 @@ class PrinceController extends CI_Controller {
 			'minimum_order' => $request->orders->minimum.' '
 		];
 
-		echo json_encode($prince::updateVendor($id, $data));
+		echo json_encode($cuckooNest::updateVendor($id, $data));
 	}
 
 	public function getProductsByVendor($id){
-		$this->load->model('Prince');
-		$prince = new Prince();
-		echo json_encode($prince::getProductsByVendor($id));
+		$this->load->model('CuckooNest');
+		$cuckooNest = new CuckooNest();
+		echo json_encode($cuckooNest::getProductsByVendor($id));
 	}
 
 	public function addProducts() {
-		$this->load->model('Prince');
-		$prince = new Prince();
+		$this->load->model('CuckooNest');
+		$cuckooNest = new CuckooNest();
 
 		$postData = file_get_contents("php://input");
 		$request = json_decode($postData);
@@ -99,6 +99,6 @@ class PrinceController extends CI_Controller {
 			}
 		}
 
-		echo json_encode($prince::addProducts(['newData' => $newData, 'editData' => $editData]));
+		echo json_encode($cuckooNest::addProducts(['newData' => $newData, 'editData' => $editData]));
 	}
 }

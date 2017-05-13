@@ -1,0 +1,70 @@
+<form novalidate>
+    <h1>פרטי התקשרות</h1>
+    <div class="row">
+        <div class="col-md-4 col-sm-12 col-md-push-8 ">
+            <h4>סוכן/ת</h4>
+            <p>
+                <span>שם</span>
+                <span>:</span>
+                <input class="inputField" type="text" ng-model="vendorNewInfo.agent.name" ng-show="vendorNewInfo">
+                <span ng-hide="editMode">{{ vendorInfo.agent.name }}</span>
+                <span class="missingInfo" ng-hide="editMode || vendorInfo.agent.name">חסר</span>
+            </p>
+            <p>
+                <span>טלפון</span>
+                <span>:</span>
+                <input class="inputField" type="text" ng-model="vendorNewInfo.agent.phoneNumber" ng-show="vendorNewInfo">
+                <span ng-hide="editMode">{{ vendorInfo.agent.phoneNumber }}</span>
+                <span class="missingInfo" ng-hide="editMode || vendorInfo.agent.phoneNumber">חסר</span>
+            </p>
+        </div>
+        <div class="col-md-4 col-sm-12">
+            <h4>נהג/ת</h4>
+            <p>
+                <span>שם</span>
+                <span>:</span>
+                <input class="inputField" type="text" ng-model="vendorNewInfo.driver.name" ng-show="vendorNewInfo">
+                <span ng-hide="editMode">{{ vendorInfo.driver.name }}</span>
+                <span class="missingInfo" ng-hide="editMode || vendorInfo.driver.name">חסר</span>
+            </p>
+            <p>
+                <span>טלפון</span>
+                <span>:</span>
+                <input class="inputField" type="text" ng-model="vendorNewInfo.driver.phoneNumber" ng-show="vendorNewInfo">
+                <span ng-hide="editMode">{{ vendorInfo.driver.phoneNumber }}</span>
+                <span class="missingInfo" ng-hide="editMode || vendorInfo.driver.phoneNumber">חסר</span>
+            </p>
+        </div>
+        <div class="col-md-4 col-sm-12 col-md-pull-8">
+            <h4>מוקד הזמנות</h4>
+            <p>
+                <span>טלפון</span>
+                <span>:</span>
+                <input class="inputField" type="text" ng-model="vendorNewInfo.orders.phoneNumber" ng-show="vendorNewInfo">
+                <span ng-hide="editMode">{{ vendorInfo.orders.phoneNumber }}</span>
+                <span class="missingInfo" ng-hide="editMode || vendorInfo.orders.phoneNumber">חסר</span>
+            </p>
+            <p>
+                <span>מינימום הזמנה</span>
+                <span>:</span>
+                <input class="inputField" type="text" ng-model="vendorNewInfo.orders.minimum" ng-show="vendorNewInfo">
+                <span ng-hide="editMode || vendorInfo.orders.minimum < 1">{{ vendorInfo.orders.minimum }}</span>
+                <span class="missingInfo" ng-hide="editMode || vendorInfo.orders.minimum > 0">אין מינימום הזמנה</span>
+            </p>
+        </div>
+        <div class="col-md-12 col-sm-12">
+            <h4>
+                <span>הנחה</span>
+                <span>:</span>
+                <input class="inputField" type="text" ng-model="vendorNewInfo.discount" ng-show="vendorNewInfo">
+                <span ng-hide="editMode || vendorInfo.discount < 1">{{ vendorInfo.discount }}%</span>
+                <span class="missingInfo" ng-hide="editMode || vendorInfo.discount > 0">אין</span>
+            </h4>
+        </div>
+        <button type="button" class="btn btn-info btn-block" ng-click="editVendor()" ng-show="!editMode">ערוך פרטים</button>
+        <div class="btn-group btn-group-justified" style="direction: ltr;" ng-show="editMode">
+            <a href="#" class="btn btn-success" ng-click="saveEditVendor()">שמור</a>
+            <a href="#" class="btn btn-danger" ng-click="cancelEditVendor()">ביטול</a>
+        </div>
+    </div>
+</form>

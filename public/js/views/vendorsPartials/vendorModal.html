@@ -1,0 +1,67 @@
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal">&times;</button>
+    <h4 class="modal-title">{{ name }} - הוספת ספק חדש</h4>
+</div>
+<div class="modal-body clearfix">
+    <form novalidate>
+        <div class="col-md-12 col-sm-12">
+            <h4>
+                <span>שם הספק</span>
+                <span>:</span>
+                <input class="inputField" type="text" ng-model="newVendorInfo.name">
+            </h4>
+        </div>
+        <div class="col-md-4 col-sm-12 col-md-push-8 ">
+            <h4>סוכן/ת</h4>
+            <p>
+                <span>שם</span>
+                <span>:</span>
+                <input class="inputField" type="text" ng-model="newVendorInfo.agent.name">
+            </p>
+            <p>
+                <span>טלפון</span>
+                <span>:</span>
+                <input class="inputField" type="text" ng-model="newVendorInfo.agent.phoneNumber">
+            </p>
+        </div>
+        <div class="col-md-4 col-sm-12">
+            <h4>נהג/ת</h4>
+            <p>
+                <span>שם</span>
+                <span>:</span>
+                <input class="inputField" type="text" ng-model="newVendorInfo.driver.name">
+            </p>
+            <p>
+                <span>טלפון</span>
+                <span>:</span>
+                <input class="inputField" type="text" ng-model="newVendorInfo.driver.phoneNumber">
+            </p>
+        </div>
+        <div class="col-md-4 col-sm-12 col-md-pull-8">
+            <h4>מוקד הזמנות</h4>
+            <p>
+                <span>טלפון</span>
+                <span>:</span>
+                <input class="inputField" type="text" ng-model="newVendorInfo.orders.phoneNumber">
+            </p>
+            <p>
+                <span>מינימום הזמנה</span>
+                <span>:</span>
+                <input class="inputField" type="text" ng-model="newVendorInfo.orders.minimum">
+            </p>
+        </div>
+        <div class="col-md-12 col-sm-12">
+            <h4>
+                <span>הנחה</span>
+                <span>:</span>
+                <input class="inputField" type="text" ng-model="newVendorInfo.discount">
+            </h4>
+        </div>
+    </form>
+</div>
+<div class="modal-footer">
+    <div class="btn-group btn-group-justified" style="direction: ltr;">
+        <a href="#" class="btn btn-success" ng-click="saveAddVendor()">שמור</a>
+        <a href="#" class="btn btn-danger" ng-click="cancelAddVendor()">ביטול</a>
+    </div>
+</div>

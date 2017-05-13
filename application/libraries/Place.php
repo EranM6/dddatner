@@ -79,10 +79,9 @@ abstract class Place {
 
 			foreach ($query->result() as $row) {
 				$products[$row->id] = [
-
 					'name' => $row->name,
 					'price' => $row->price,
-					'measurement' => $row->weight === '1' ? 'weight' : 'unit'
+					'measurement' => $row->weight
 				];
 			}
 			$results['products'] = $products;
@@ -91,4 +90,28 @@ abstract class Place {
 		return $results;
 	}
 
+	protected static function _addProducts($data, $conn) {
+		$result = null;
+
+		if ($data['newData']) {
+			$count = count($data['newData']);
+
+			$conn->insert_batch('products', $data['newData']);
+
+			$first_id = $conn->insert_id();
+
+			$last_id = $first_id + ($count - 1);
+
+			$result['new'] = ['firstId' => $first_id, 'lastId' => $last_id];
+		}
+		if ($data['editData']) {
+
+			$conn->update_batch('products', $data['editData'], 'id');
+
+
+			$result['edit'] = 'ok';
+		}
+
+		return $result;
+	}
 }
