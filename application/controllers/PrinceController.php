@@ -5,20 +5,18 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class PrinceController extends CI_Controller {
 
 	public function getVendors() {
-		$this->load->model('Prince');
-		$prince = new Prince();
-		echo json_encode($prince::getVendors());
+		setLocation('Prince');
+		business();
+		echo json_encode($this->prince->getVendors());
 	}
 
 	public function getVendor($id) {
-		$this->load->model('Prince');
-		$prince = new Prince();
-		echo json_encode($prince::getVendor($id));
+		business();
+		echo json_encode($this->prince->getVendor($id));
 	}
 
 	public function addVendor() {
-		$this->load->model('Prince');
-		$prince = new Prince();
+		business();
 
 		$postData = file_get_contents("php://input");
 		$request = json_decode($postData);
@@ -34,12 +32,11 @@ class PrinceController extends CI_Controller {
 			'minimum_order' => $request->orders->minimum.' '
 		];
 
-		echo json_encode($prince::addVendor($data));
+		echo json_encode($this->prince->addVendor($data));
 	}
 
 	public function updateVendor() {
-		$this->load->model('Prince');
-		$prince = new Prince();
+		business();
 
 		$postData = file_get_contents("php://input");
 		$request = json_decode($postData);
@@ -56,18 +53,16 @@ class PrinceController extends CI_Controller {
 			'minimum_order' => $request->orders->minimum.' '
 		];
 
-		echo json_encode($prince::updateVendor($id, $data));
+		echo json_encode($this->prince->updateVendor($id, $data));
 	}
 
 	public function getProductsByVendor($id){
-		$this->load->model('Prince');
-		$prince = new Prince();
-		echo json_encode($prince::getProductsByVendor($id));
+		business();
+		echo json_encode($this->prince->getProductsByVendor($id));
 	}
 
 	public function addProducts() {
-		$this->load->model('Prince');
-		$prince = new Prince();
+		business();
 
 		$postData = file_get_contents("php://input");
 		$request = json_decode($postData);
@@ -99,6 +94,11 @@ class PrinceController extends CI_Controller {
 			}
 		}
 
-		echo json_encode($prince::addProducts(['newData' => $newData, 'editData' => $editData]));
+		echo json_encode($this->prince->addProducts(['newData' => $newData, 'editData' => $editData]));
+	}
+
+	public function getReceiptsByVendor($id, $month, $year){
+		business();
+		echo json_encode($this->prince->getReceiptsByVendor($id, $month, $year));
 	}
 }

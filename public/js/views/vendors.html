@@ -36,39 +36,24 @@
                     </md-tab>
                     <md-tab label="מוצרים" ng-click="getProductsByVendor()">
                         <md-content class="md-padding">
-                            <h1>קטלוג מוצרים / מחירון</h1>
-                            <div class="row">
-                                <div class="col-md-4 col-sm-12" ng-repeat="(key, value) in vendorProducts" ng-class="{edited: toggleEditedClass[key]}">
-                                        <span>{{ value.name }}</span>
-                                        <span> {{ value.price }}</span>
-                                        ש"ח
-                                        <span ng-if="value.measurement == '1'">לקילו</span>
-                                        <span ng-if="value.measurement == '0'">ליחידה</span>
-                                        <span class="glyphicon glyphicon-edit" ng-click="editProduct(key)"></span>
-                                </div>
-                                <div class="col-md-4 col-sm-12 newProduct" ng-repeat="(key, value) in newProducts">
-                                        <span>{{ value.name }}</span>
-                                        <span> {{ value.price }}</span>
-                                        ש"ח
-                                        <span ng-if="value.measurement == '1'">לקילו</span>
-                                        <span ng-if="value.measurement == '0'">ליחידה</span>
-                                        <span class="glyphicon glyphicon-edit" ng-click="editProduct(key)"></span>
-                                </div>
-                            </div>
-                            <new-product-directive ng-show="addProduct"></new-product-directive>
-                            <button type="button" class="btn btn-success btn-block" ng-click="saveNewProducts()" ng-show="newProducts.length > 0 || editedProducts.length > 0">שמור שינויים</button>
-                            <button type="button" class="btn btn-info btn-block" ng-click="addProduct = true" ng-disabled="addProduct">הוסף מוצר</button>
+                            <product-info-directive></product-info-directive>
                         </md-content>
                     </md-tab>
-                    <md-tab label="חשבוניות / תעודות משלוח">
+                    <md-tab label="חשבוניות / תעודות משלוח" ng-click="getReceiptsByVendor(today.getMonth() +1 , today.getFullYear())">
                         <md-content class="md-padding">
-                            <h1 class="md-display-2">Tab Three</h1>
-                            <p>Integer turpis erat, porttitor vitae mi faucibus, laoreet interdum tellus.
-                                Curabitur posuere molestie dictum. Morbi eget congue risus, quis rhoncus quam.
-                                Suspendisse vitae hendrerit erat, at posuere mi. Cras eu fermentum nunc. Sed id
-                                ante eu orci commodo volutpat non ac est. Praesent ligula diam, congue eu enim
-                                scelerisque, finibus commodo lectus.</p>
-                        </md-content>
+                            <div class="row receiptsBar">
+                                <div class="col-md-2 col-sm-1">
+                                    <button type="button" class="btn btn-primary" ng-click="getReceiptsByVendor(selectedMonth.month + 1)" ng-disabled="selectedMonth.year >= today.getFullYear() && selectedMonth.month >= today.getMonth() +1"><span class="glyphicon glyphicon-menu-left"></span></button>
+                                </div>
+                                <p class="col-md-8 col-sm-10">{{ selectedMonth.month | monthName }} {{ selectedMonth.year }}</p>
+                                <div class="col-md-2 col-sm-1">
+                                    <button type="button" class="btn btn-primary" ng-click="getReceiptsByVendor(selectedMonth.month - 1)"><span class="glyphicon glyphicon-menu-right"><a href="#"></a></span></button>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4 col-sm-12" ng-repeat="(key, value) in vendorProducts" ng-class="{edited: toggleEditedClass[key]}">
+                                </div>
+                            </div>
                     </md-tab>
                     <md-tab label="היסטוריה">
                         <md-content class="md-padding">

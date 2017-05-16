@@ -6,7 +6,15 @@ dddatner.filter('capitalize', function () {
         return (!!input) ? input.replace(reg, function (txt) {
             return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
         }) : '';
-    }
+    };
+});
+
+dddatner.filter('monthName', function() {
+    return function (monthNumber) {
+        var monthNames = [ 'ינואר', 'פברואר', 'מרץ', 'אפריל', 'מאי', 'יוני',
+            'יולי', 'אוגוסט', 'ספטמבר', 'אוקטובר', 'נובמבר', 'דצמבר' ];
+        return monthNames[monthNumber - 1];
+    };
 });
 
 
@@ -97,5 +105,5 @@ function routeConfiguration($locationProvider, $stateProvider, $urlRouterProvide
             },
             url: "/dddatner/",
             templateUrl: "./public/js/views/vendors.html"
-        })
+        });
 }

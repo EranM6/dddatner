@@ -7,6 +7,7 @@ function vendorCtrl($scope, $stateParams, $timeout, dbModel, data) {
     $scope.section = 'ספקים';
 
     $scope.loading = false;
+    $scope.vendors = {};
     $scope.activeVendorId = null;
     $scope.vendorNewInfo = null;
     $scope.newVendorInfo = null;
@@ -18,6 +19,7 @@ function vendorCtrl($scope, $stateParams, $timeout, dbModel, data) {
     $scope.newProducts = [];
     var productEdited = null;
     $scope.editedProducts = [];
+    $scope.selectedMonth = {};
     $scope.modalObject = null;
     $scope.toggleEditedClass = {};
     $scope.toggleListItem = {item: -1};
@@ -47,10 +49,11 @@ function vendorCtrl($scope, $stateParams, $timeout, dbModel, data) {
         $scope.vendorProducts = {};
         $scope.toggleListItem = {item: id};
         $scope.activeVendorId = id;
+
         dbModel.getVendor(place, id)
             .then(function (data) {
                     $scope.vendorInfo = data.data.vendor;
-                    currentData.info = id
+                    currentData.info = id;
                 }
             )
             .catch(function (err) {
@@ -60,7 +63,7 @@ function vendorCtrl($scope, $stateParams, $timeout, dbModel, data) {
             .finally(function () {
                     $timeout(function () {
                         $scope.loading = false;
-                    }, 1000)
+                    }, 1000);
                 }
             );
     };
@@ -91,7 +94,7 @@ function vendorCtrl($scope, $stateParams, $timeout, dbModel, data) {
             .on('hidden.bs.modal', function () {
                 $scope.modalObject = null;
                 $scope.newVendorInfo = null;
-            })
+            });
     };
 
     $scope.saveAddVendor = function () {
@@ -113,7 +116,7 @@ function vendorCtrl($scope, $stateParams, $timeout, dbModel, data) {
             .finally(function () {
                     $timeout(function () {
                         $scope.loading = false;
-                    }, 1000)
+                    }, 1000);
                 }
             );
     };
@@ -145,7 +148,7 @@ function vendorCtrl($scope, $stateParams, $timeout, dbModel, data) {
                 .finally(function () {
                         $timeout(function () {
                             $scope.loading = false;
-                        }, 1000)
+                        }, 1000);
                     }
                 );
         }
@@ -170,7 +173,7 @@ function vendorCtrl($scope, $stateParams, $timeout, dbModel, data) {
                 .finally(function () {
                         $timeout(function () {
                             $scope.loading = false;
-                        }, 1000)
+                        }, 1000);
                     }
                 );
         }
@@ -200,7 +203,7 @@ function vendorCtrl($scope, $stateParams, $timeout, dbModel, data) {
                         var firstId = data.data.firstId;
                         for (var i = 0; i < $scope.newProducts.length; i++) {
                             $scope.vendorProducts[firstId] = $scope.newProducts[i];
-                            firstId++
+                            firstId++;
                         }
                     }
                     $scope.newProducts = [];
@@ -217,7 +220,7 @@ function vendorCtrl($scope, $stateParams, $timeout, dbModel, data) {
             .finally(function () {
                     $timeout(function () {
                         $scope.loading = false;
-                    }, 1000)
+                    }, 1000);
                 }
             );
     };
@@ -236,7 +239,7 @@ function vendorCtrl($scope, $stateParams, $timeout, dbModel, data) {
                 productEdited = null;
                 $scope.modalObject = null;
                 console.log($scope.toggleEditedClass);
-            })
+            });
     };
 
     $scope.showEditProduct = function () {
@@ -251,10 +254,47 @@ function vendorCtrl($scope, $stateParams, $timeout, dbModel, data) {
         $scope.vendorProducts[productEdited] = $scope.productNewInfo;
         $scope.productNewInfo = null;
         $scope.changeProduct = true;
-        $scope.closeEditProduct()
+        $scope.closeEditProduct();
+    };
+
+    $scope.getReceiptsByVendor = function (month, year) {
+
+
+            $scope.loading = true;
+            $scope.selectedMonth = $scope.selectedMonth ? getSelectedMonth(month, year || $scope.selectedMonth.year) : {month: month, year: year};
+                var id = $scope.activeVendorId;
+            dbModel.getReceiptsByVendor(place, id, $scope.selectedMonth)
+                .then(function (data) {
+                        if (data.data.products)
+                            $scope.vendorProducts = data.data.products;
+                        currentData.products = id;
+                    }
+                )
+                .catch(function (err) {
+                        console.log(err);
+                    }
+                )
+                .finally(function () {
+                        $timeout(function () {
+                            $scope.loading = false;
+                        }, 1000);
+                    }
+                );
+
+    };
+
+    var getSelectedMonth = function(month, year){
+        if (month === 13){
+            month = 1;
+            year++;
+        }else if (month === 0){
+            month = 12;
+            year--;
+        }
+        return {month: month, year: year};
     };
 
     var valid = function (oldObject, newObject) {
         return true;
-    }
+    };
 }

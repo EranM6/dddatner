@@ -14,7 +14,7 @@ class Home extends CI_Controller {
 
 	public function getLocation() {
 		$location = null;
-		$user = (userLocation());
+		$user = getUserType();
 		if ($user === 'Prince')
 //		if ($user === 'God')
 			$location = ['id' => 0, 'codeName' => 'prince', 'displayName' => 'הנסיך'];

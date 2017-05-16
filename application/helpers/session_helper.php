@@ -1,19 +1,41 @@
 <?php
 
+function getInstance(){
+	$CI =& get_instance();
+	return $CI;
+}
+
+function loadSession(){
+	$CI = getInstance();
+	$CI->load->library('session');
+	return $CI;
+}
 
 function setUserSession(){
-	$CI =& get_instance();
+	loadSession()->session->set_userdata('user', $_SERVER['REMOTE_USER']);
+}
 
-	$CI->load->library('session');
-	$CI->session->set_userdata('user', $_SERVER['REMOTE_USER']);
+function getUserType(){
+	$user = loadSession()->session->userdata('user');
+
+	if (!isset($user)) { return false; } else { return $user; }
 
 }
 
-function userLocation() {
-	$CI =& get_instance();
-	$CI->load->library('session');
+function getLocation() {
+	return loadSession()->session->userdata('location');
+}
 
-	$user = $CI->session->userdata('user');
+function setLocation($location){
+	loadSession()->session->set_userdata('location', $location);
+}
 
-	if (!isset($user)) { return false; } else { return $user; }
+function business(){
+	$location = getLocation();
+	getInstance()->load->library(lcfirst($location));
+}
+
+function getConnection(){
+	$CI = getInstance();
+	return $CI->load->database(lcfirst(getLocation()), TRUE);
 }

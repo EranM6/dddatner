@@ -89,3 +89,8 @@ new-product-directive input {
 .edited {
     color: #31b0d5;
 }
+
+.receiptsBar {
+    font-size: 3rem;
+    text-align: center;
+}
