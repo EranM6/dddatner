@@ -1,9 +1,9 @@
-dddatner.directive("productInfoDirective", [productInfoDirective]);
+dddatner.directive("vendorInfoDirective", [vendorInfoDirective]);
 
-function productInfoDirective () {
+function vendorInfoDirective () {
 
     return {
         restrict: 'E',
-        templateUrl: 'public/js/views/vendorsPartials/productsInfo.html'
+        templateUrl: 'public/js/views/vendorsPartials/vendorInfo.html'
     };
 }

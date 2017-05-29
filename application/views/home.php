@@ -11,7 +11,7 @@ header("Pragma: no-cache");
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="icon" type="image/png" href="http://d32997.neocities.org/pictures/donald-trump-emoji.png"/>
+	<link rel="icon" type="image/png" href="./public/title.ico"/>
 	<title>Supply Management</title>
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
 		  integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
@@ -23,7 +23,7 @@ header("Pragma: no-cache");
 		}
 	</style>
 </head>
-<body ng-app="dddatner" ng-cloak style="direction: rtl">
+<body ng-app="dddatner" ng-cloak style="direction: rtl; background-color: white;">
 <div ui-view></div>
 
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>
@@ -38,7 +38,8 @@ header("Pragma: no-cache");
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
 		integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
 		crossorigin="anonymous"></script>
-<script src="./public/minified.js/dddatner.min.js"></script>
+<!--<script src="./public/minified.js/dddatner.min.js"></script>-->
+<script src="./public/minified.js/dddatner.js"></script>
 
 </body>
 </html>

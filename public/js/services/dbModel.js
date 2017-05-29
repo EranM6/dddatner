@@ -11,26 +11,38 @@ function dbModelFunction($http) {
         getLocation: function () {
             return $http.get(urlBase + "home/getLocation/");
         },
-        getVendors: function (place) {
-            return $http.get(urlBase + place + "Controller/getVendors");
+        setLocation: function (location) {
+            return $http.post(urlBase + "home/setLocation/", location);
         },
-        getVendor: function (place, id) {
-            return $http.get(urlBase + place + "Controller/getVendor/" + id);
+        getVendors: function () {
+            return $http.get(urlBase + "Controller/getVendors");
         },
-        addVendor: function (place, data) {
-            return $http.post(urlBase + place + "Controller/addVendor/" , data);
+        getVendor: function (id) {
+            return $http.get(urlBase + "Controller/getVendor/" + id);
         },
-        updateVendor: function (place, data) {
-            return $http.post(urlBase + place + "Controller/updateVendor/" , data);
+        addVendor: function (data) {
+            return $http.post(urlBase + "Controller/addVendor/" , data);
         },
-        getProductsByVendor: function (place, id) {
-            return $http.get(urlBase + place + "Controller/getProductsByVendor/" + id);
+        updateVendor: function (data) {
+            return $http.post(urlBase + "Controller/updateVendor/" , data);
         },
-        addProducts: function (place, data) {
-            return $http.post(urlBase + place + "Controller/addProducts/" , data);
+        getProductsByVendor: function (id) {
+            return $http.get(urlBase + "Controller/getProductsByVendor/" + id);
         },
-        getReceiptsByVendor: function (place, id, month) {
-            return $http.get(urlBase + place + "Controller/getReceiptsByVendor/" + id + "/" + month.month + "/" + month.year);
+        addProducts: function (data) {
+            return $http.post(urlBase + "Controller/addProducts/" , data);
+        },
+        getReceiptsByVendor: function (id, month) {
+            return $http.get(urlBase + "Controller/getReceiptsByVendor/" + id + "/" + month.month + "/" + month.year);
+        },
+        addReceipts: function (data) {
+            return $http.post(urlBase + "Controller/addReceipts/" , data);
+        },
+        closeMonth: function (data) {
+            return $http.post(urlBase + "Controller/closeMonth/" , data);
+        },
+        getHistory: function (id) {
+            return $http.get(urlBase + "Controller/getHistory/" + id);
         }
     };
 }

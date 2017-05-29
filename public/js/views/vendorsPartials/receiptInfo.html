@@ -1,0 +1,95 @@
+<div id="receiptModal" class="modal fade" data-backdrop="static" data-keyboard="false" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <receipt-modal-directive></receipt-modal-directive>
+        </div>
+    </div>
+</div>
+<div class="row receiptsBar">
+    <div class="col-md-2 col-sm-1">
+        <button type="button" class="btn btn-primary" ng-click="getReceiptsByVendor(selectedMonth.month + 1)" ng-disabled="selectedMonth.year >= today.getFullYear() && selectedMonth.month >= today.getMonth() +1"><span class="glyphicon glyphicon-menu-left"></span></button>
+    </div>
+    <p class="col-md-8 col-sm-10">{{ selectedMonth.month | monthName }} {{ selectedMonth.year }}</p>
+    <div class="col-md-2 col-sm-1">
+        <button type="button" class="btn btn-primary" ng-click="getReceiptsByVendor(selectedMonth.month - 1)"><span class="glyphicon glyphicon-menu-right"><a href="#"></a></span></button>
+    </div>
+</div>
+<table class="table table-bordered table-hover table-condensed table-responsive">
+    <thead>
+        <tr>
+            <th>תאריך</th>
+            <th>מס' חשבונית / תעודה</th>
+            <th>סכום</th>
+            <th>חיוב / זיכוי</th>
+            <th>זהה למרכזת</th>
+            <th ng-if="!closedMonth">ערוך תעודה</th>
+        </tr>
+    </thead>
+    <tbody>
+    <tr ng-repeat="(key,receipt) in vendorReceipts | orderObjectBy:'date'" ng-class="{edited: editedReceipts[receipt.id]}">
+
+        <td ng-if-start="!editedReceipts[receipt.id]">{{ receipt.date }}</td>
+        <td>{{ receipt.serial }}</td>
+        <td>{{ receipt.amount }}</td>
+        <td ng-if="receipt.charge == '1'">חיוב</td>
+        <td ng-if="receipt.charge == '0'">זיכוי</td>
+        <td>
+            <a href="#" class="glyphicon" ng-class="{'approved glyphicon-ok': receipt.approved == '1', 'notApproved glyphicon-remove': receipt.approved == '0'}" ng-click="changeReceiptState(receipt.id)"></a>
+        </td>
+        <td ng-if-end ng-if="!closedMonth"><span class="glyphicon glyphicon-edit" ng-click="editReceipt(receipt.id)"></span></td>
+
+        <td ng-if-start="editedReceipts[receipt.id]">{{ editedReceipts[receipt.id].date }}</td>
+        <td>{{ editedReceipts[receipt.id].serial }}</td>
+        <td>{{ editedReceipts[receipt.id].amount }}</td>
+        <td ng-if="editedReceipts[receipt.id].charge == '1'">חיוב</td>
+        <td ng-if="editedReceipts[receipt.id].charge == '0'">זיכוי</td>
+        <td>
+            <a href="#" class="glyphicon" ng-class="{'approved glyphicon-ok': editedReceipts[receipt.id].approved == '1', 'notApproved glyphicon-remove': editedReceipts[receipt.id].approved == '0'}" ng-click="reEditReceiptState(receipt)"></a>
+        </td>
+        <td><span class="glyphicon glyphicon-edit" ng-click="reEditReceipt(receipt.id)"></span></td>
+        <td ng-if-end><span class="glyphicon glyphicon-repeat" ng-click="resetReceipt(receipt.id)"></span></td>
+    </tr>
+    <tr class="newProduct" ng-repeat="receipt in newReceipts | orderBy: 'date'">
+        <td>{{ receipt.date }}</td>
+        <td>{{ receipt.serial }}</td>
+        <td>{{ receipt.amount }}</td>
+        <td ng-if="receipt.charge == '1'">חיוב</td>
+        <td ng-if="receipt.charge == '0'">זיכוי</td>
+        <td>
+            <a href="#" class="glyphicon" ng-class="{'approved glyphicon-ok': receipt.approved == '1', 'notApproved glyphicon-remove': receipt.approved == '0'}" ng-click="changeNewReceiptState(receipt)"></a>
+        </td>
+        <td><span class="glyphicon glyphicon-edit" ng-click="editNewReceipt($index)"></span></td>
+        <td><span class="glyphicon glyphicon-remove" ng-click="removeNewReceipt($index)"></span></td>
+    </tr>
+    </tbody>
+</table>
+
+<table class="table table-bordered table-hover table-condensed table-responsive" style="text-align: center">
+    <thead>
+    <tr>
+        <th>סה"כ חשבוניות / תעודות</th>
+        <th>חיוב</th>
+        <th>זיכוי</th>
+        <th>לתשלום</th>
+        <th>סגור חודש</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>{{ countOfReceipts }}</td>
+        <td>{{ chargedReceipts | number:2 }}</td>
+        <td>{{ refundedReceipts | number:2 }}</td>
+        <td style="direction: ltr">{{ chargedReceipts - refundedReceipts | number:2 }}</td>
+        <td>
+            <button ng-if="!closedMonth" class="btn btn-success" ng-click="submitMonth()" ng-disabled="!canClose || receiptsEditCount > 0 || newReceipts.length > 0">סגור חודש</button>
+            <button ng-if="closedMonth" class="btn btn-danger">חודש סגור</button>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<new-receipt-directive ng-show="addReceipt"></new-receipt-directive>
+<button type="button" class="btn btn-success btn-block" ng-click="saveNewReceipts()" ng-show="newReceipts.length > 0 || receiptsEditCount > 0">שמור שינויים</button>
+<button ng-if="!closedMonth" type="button" class="btn btn-info btn-block" ng-click="openReceiptScheme()" ng-disabled="addReceipt">הוסף חשבונית / תעודה</button>

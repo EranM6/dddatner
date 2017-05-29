@@ -8,6 +8,19 @@ ul {
     list-style-type: none;
 }
 
+.headTitle {
+    direction: ltr;
+    font-size: 2.5rem;
+}
+
+md-pagination-wrapper {
+    right: 0;
+}
+
+.md-tab {
+    float: right;
+}
+
 .inputField {
     direction: rtl;
     border: none;
@@ -74,12 +87,29 @@ new-product-directive input {
     }
 }
 
-#vendorModal > .modal-dialog {
+div[id*="Modal"] > .modal-dialog {
     width: 50%;
     webkit-transform: translateY(50%);
     -ms-transform: translateY(50%);
     -o-transform: translateY(50%);
     transform: translateY(50%);
+}
+
+.productElement {
+    padding: 15px 35px;
+    float: right;
+}
+
+.productElement > td{
+    display: block;
+    text-align: center;
+    border-radius: 15px;
+    box-shadow: 4px 4px 6px black;
+}
+
+.productElement > td > p {
+    padding: 0;
+    margin: auto;
 }
 
 .newProduct {
@@ -93,4 +123,16 @@ new-product-directive input {
 .receiptsBar {
     font-size: 3rem;
     text-align: center;
+}
+
+th {
+    text-align: center;
+}
+
+.approved {
+    color: #449d44;
+}
+
+.notApproved {
+    color: #d9534f;
 }

@@ -3,28 +3,29 @@
     <h4 class="modal-title">{{ name }} - עריכת מוצר</h4>
 </div>
 <div class="modal-body clearfix">
-    <form novalidate>
+    <form name="editProductForm" novalidate>
         <div class="row" style="font-size: 16px;">
             <div class="col-md-4 col-sm-12 col-md-push-8">
                 <h4>
                     <span>שם המוצר</span>
                     <span>:</span>
-                    <input class="inputField" type="text" ng-model="productNewInfo.name">
+                    <input class="inputField" name="name" type="text" ng-model="productNewInfo.name" required/>
                 </h4>
             </div>
             <div class="col-md-3 col-sm-12 col-md-push-1">
                 <h4>
                     <span>מחיר</span>
                     <span>:</span>
-                    <input class="inputField" type="text" ng-model="productNewInfo.price">
+                    <input class="inputField" name="amount" type="text" ng-model="productNewInfo.price" pattern="^\d+(?:\.\d{1,2})?$" required/>
+                    <p class="error" ng-show="editProductForm.amount.$error.pattern">סכום לא תקין</p>
                 </h4>
             </div>
             <div class="col-md-3 col-sm-12 col-md-pull-5" style="direction: ltr;">
                 <h4>
                     <label class="radio-inline"><input type="radio" name="optradio" ng-model="productNewInfo.measurement"
-                                                       value="1">משקל</label>
+                                                       value="1" required>משקל</label>
                     <label class="radio-inline"><input type="radio" name="optradio" ng-model="productNewInfo.measurement"
-                                                       value="0">יחידה</label>
+                                                       value="0" required>יחידה</label>
                 </h4>
             </div>
         </div>
@@ -32,7 +33,10 @@
 </div>
 <div class="modal-footer">
     <div class="btn-group btn-group-justified" style="direction: ltr;">
-        <a href="#" class="btn btn-success" ng-click="showEditProduct()"><span class="glyphicon glyphicon-ok"></span></a>
-        <a href="#" class="btn btn-danger" ng-click="closeEditProduct()"><span class="glyphicon glyphicon-remove"></span></a>
+        <button class="btn btn-success" ng-click="showEditProduct()" ng-disabled="
+            editProductForm.name.$error.required || editProductForm.amount.$error.required || editProductForm.amount.$error.pattern || editProductForm.optradio.$error.required" style="width: auto">
+            <span class="glyphicon glyphicon-ok"></span>
+        </button>
+        <button class="btn btn-danger" ng-click="closeEditProduct()" style="width: auto"><span class="glyphicon glyphicon-remove"></span></button>
     </div>
 </div>

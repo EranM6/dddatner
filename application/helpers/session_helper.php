@@ -13,13 +13,7 @@ function loadSession(){
 
 function setUserSession(){
 	loadSession()->session->set_userdata('user', $_SERVER['REMOTE_USER']);
-}
-
-function getUserType(){
-	$user = loadSession()->session->userdata('user');
-
-	if (!isset($user)) { return false; } else { return $user; }
-
+	setLocation($_SERVER['REMOTE_USER']);
 }
 
 function getLocation() {

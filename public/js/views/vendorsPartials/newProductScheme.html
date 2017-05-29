@@ -1,30 +1,34 @@
-<form novalidate>
+<form name="newProductForm" novalidate>
     <div class="row" style="font-size: 16px;">
         <div class="col-md-4 col-sm-12 col-md-push-8">
             <h4>
                 <span>שם המוצר</span>
                 <span>:</span>
-                <input class="inputField" type="text" ng-model="newProduct.name">
+                <input class="inputField" type="text" name="name" ng-model="newProduct.name" required/>
             </h4>
         </div>
         <div class="col-md-3 col-sm-12 col-md-push-1">
             <h4>
                 <span>מחיר</span>
                 <span>:</span>
-                <input class="inputField" type="text" ng-model="newProduct.price">
+                <input class="inputField" name="amount" type="text" ng-model="newProduct.price" pattern="^\d+(?:\.\d{1,2})?$" required/>
+                <p class="error" ng-show="newProductForm.amount.$error.pattern">סכום לא תקין</p>
             </h4>
         </div>
         <div class="col-md-3 col-sm-12 col-md-pull-5" style="direction: ltr;">
             <h4>
                 <label class="radio-inline"><input type="radio" name="optradio" ng-model="newProduct.measurement"
-                                                   value="1">משקל</label>
+                                                   value="1" required>משקל</label>
                 <label class="radio-inline"><input type="radio" name="optradio" ng-model="newProduct.measurement"
-                                                   value="0">יחידה</label>
+                                                   value="0" required>יחידה</label>
             </h4>
         </div>
         <div class="btn-group col-md-2 col-sm-12 col-md-pull-10" style="direction: ltr;">
-            <a href="#" class="btn btn-success" ng-click="showNewProduct()"><span class="glyphicon glyphicon-ok"></span></a>
-            <a href="#" class="btn btn-danger" ng-click="cancelNewProduct()"><span class="glyphicon glyphicon-remove"></span></a>
+            <button class="btn btn-success" ng-click="showNewProduct()" ng-disabled="
+            newProductForm.name.$error.required || newProductForm.amount.$error.required || newProductForm.amount.$error.pattern || newProductForm.optradio.$error.required">
+                <span class="glyphicon glyphicon-ok"></span>
+            </button>
+            <button class="btn btn-danger" ng-click="cancelNewProduct()"><span class="glyphicon glyphicon-remove"></span></button>
         </div>
     </div>
 </form>

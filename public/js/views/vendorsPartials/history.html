@@ -1,0 +1,26 @@
+<form novalidate>
+    <h1>תשלומים קודמים</h1>
+    <ul class="years">
+        <li ng-repeat="(year,months) in records | orderObjectBy:year:true">
+            <h2>{{ years[year] }}</h2>
+            <table class="table table-bordered table-hover table-condensed table-responsive row">
+                <thead>
+                    <tr>
+                        <th>חודש</th>
+                        <th>חיוב</th>
+                        <th>זיכוי</th>
+                        <th>שולם</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="(key, month) in months">
+                        <td>{{ key | monthName }}</td>
+                        <td>{{ month.charge | number:2 }}</td>
+                        <td>{{ month.refund | number:2 }}</td>
+                        <td>{{ month.charge - month.refund | number:2}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </li>
+    </ul>
+</form>

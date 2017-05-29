@@ -17,8 +17,7 @@
 
             <!-- Modal content-->
             <div class="modal-content">
-                <vendor-modal-directive ng-if="modalObject === 'vendor'"></vendor-modal-directive>
-                <product-modal-directive ng-if="modalObject === 'product'"></product-modal-directive>
+                <vendor-modal-directive></vendor-modal-directive>
             </div>
         </div>
     </div>
@@ -26,7 +25,30 @@
     <div class="col-md-9 col-sm-12 col-md-pull-3" ng-show="activeVendorId">
 
         <div class="loader" ng-show="loading"><div></div></div>
-        <div ng-cloak>
+        <div ng-app="navWindow" ng-cloak>
+            <md-content class="md-padding">
+                <md-nav-bar
+                        md-selected-nav-item="currentNavItem"
+                        nav-bar-aria-label="navigation links">
+                    <md-nav-item ui-sref='.info' md-nav-click="goto('page2')" name="info">
+                        כללי
+                    </md-nav-item>
+                    <md-nav-item ng-click="toggleLoad()" ui-sref='.products' md-nav-click="goto('page2')" name="products">
+                        מוצרים
+                    </md-nav-item>
+                    <md-nav-item ng-click="toggleLoad()" ui-sref='.receipts' md-nav-click="goto('page3')" name="receipts">
+                        חשבוניות / תעודות משלוח
+                    </md-nav-item>
+                    <md-nav-item ng-click="toggleLoad()" ui-sref='.history' md-nav-click="goto('page3')" name="history">
+                        היסטוריה
+                    </md-nav-item>
+                </md-nav-bar>
+                <div class="ext-content">
+                    <ui-view></ui-view>
+                </div>
+            </md-content>
+        </div>
+        <!--<div ng-cloak>
             <md-content>
                 <md-tabs md-dynamic-height md-border-bottom>
                     <md-tab label="כללי">
@@ -41,33 +63,17 @@
                     </md-tab>
                     <md-tab label="חשבוניות / תעודות משלוח" ng-click="getReceiptsByVendor(today.getMonth() +1 , today.getFullYear())">
                         <md-content class="md-padding">
-                            <div class="row receiptsBar">
-                                <div class="col-md-2 col-sm-1">
-                                    <button type="button" class="btn btn-primary" ng-click="getReceiptsByVendor(selectedMonth.month + 1)" ng-disabled="selectedMonth.year >= today.getFullYear() && selectedMonth.month >= today.getMonth() +1"><span class="glyphicon glyphicon-menu-left"></span></button>
-                                </div>
-                                <p class="col-md-8 col-sm-10">{{ selectedMonth.month | monthName }} {{ selectedMonth.year }}</p>
-                                <div class="col-md-2 col-sm-1">
-                                    <button type="button" class="btn btn-primary" ng-click="getReceiptsByVendor(selectedMonth.month - 1)"><span class="glyphicon glyphicon-menu-right"><a href="#"></a></span></button>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-4 col-sm-12" ng-repeat="(key, value) in vendorProducts" ng-class="{edited: toggleEditedClass[key]}">
-                                </div>
-                            </div>
+                            <receipt-info-directive></receipt-info-directive>
+                        </md-content>
                     </md-tab>
-                    <md-tab label="היסטוריה">
+                    <md-tab label="היסטוריה" ng-click="getHistory()">
                         <md-content class="md-padding">
-                            <h1 class="md-display-2">Tab Three</h1>
-                            <p>Integer turpis erat, porttitor vitae mi faucibus, laoreet interdum tellus.
-                                Curabitur posuere molestie dictum. Morbi eget congue risus, quis rhoncus quam.
-                                Suspendisse vitae hendrerit erat, at posuere mi. Cras eu fermentum nunc. Sed id
-                                ante eu orci commodo volutpat non ac est. Praesent ligula diam, congue eu enim
-                                scelerisque, finibus commodo lectus.</p>
+                            <history-directive></history-directive>
                         </md-content>
                     </md-tab>
                 </md-tabs>
             </md-content>
-        </div>
+        </div>-->
 
     </div>
 </div>

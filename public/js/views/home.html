@@ -1,15 +1,22 @@
 <nav class="navbar navbar-inverse">
     <div class="container-fluid">
         <div class="navbar-header">
-            <a class="navbar-brand" href="#">ddDatner</a>
+            <a class="navbar-brand headTitle" href="#">
+                <span class="title">ddDatner</span>
+            </a>
         </div>
+        <ul class="nav navbar-nav navbar-right">
+            <a class="navbar-brand headTitle" href="#">
+                <span>{{ today | date:'dd/MM/yyyy HH:mm:ss'}}</span>
+            </a>
+        </ul>
         <ul ng-if="GOD" class="nav navbar-nav">
             <li class="active" ui-sref='.index'><a href="#">Home</a></li>
             <li class="dropdown" ng-repeat="business in location">
-                <a class="dropdown-toggle" data-toggle="dropdown" href="#">{{ business.displayName | capitalize }}
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#" ng-click="setLocation(business.codeName)">{{ business.displayName | capitalize }}
                     <span class="caret"></span></a>
                 <ul class="dropdown-menu">
-                    <li ui-sref='.place.vendors({codeName: "{{ business.codeName}}", displayName: "{{ business.displayName}}"})'><a href="#">ספקים</a></li>
+                    <li ui-sref='.place.vendors({codeName: "{{ business.codeName}}", displayName: "{{ business.displayName}}", vendorId: "{{ activeVendorId }}"})'><a href="#">ספקים</a></li>
                     <li ui-sref='.place.inventory({codeName: "{{ business.codeName}}", displayName: "{{ business.displayName}}"})'><a href="#">ספירות מלאי</a></li>
                     <li ui-sref='.place.productTree({codeName: "{{ business.codeName}}", displayName: "{{ business.displayName}}"})'><a href="#">עץ מוצר</a></li>
                 </ul>
@@ -23,4 +30,5 @@
         </ul>
     </div>
 </nav>
-<div ui-view></div>
+
+<div ui-view style="background-color: white;"></div>

@@ -12,26 +12,32 @@ class Home extends CI_Controller {
 		$this->load->view('home', $data);
 	}
 
+	public function setLocation() {
+		$postData = file_get_contents("php://input");
+		$location = json_decode($postData);
+
+		setLocation($location->location);
+	}
+
 	public function getLocation() {
-		$location = null;
-		$user = getUserType();
-		if ($user === 'Prince')
-//		if ($user === 'God')
-			$location = ['id' => 0, 'codeName' => 'prince', 'displayName' => 'הנסיך'];
-		elseif ($user === 'SuraMare')
-			$location = ['id' => 1, 'codeName' => 'suraMare', 'displayName' => 'סורה-מארה'];
-		elseif ($user === 'Malki')
-			$location = ['id' => 2, 'codeName' => 'malki', 'displayName' => 'מלכי'];
-		elseif ($user === 'CuckooNest')
-			$location = ['id' => 3, 'codeName' => 'cuckooNest', 'displayName' => 'קן הקוקיה'];
-		elseif ($user === 'God')
-			$location = [
+		$output = null;
+		$location = getLocation();
+		if ($location === 'Prince')
+			$output = ['id' => 0, 'codeName' => 'prince', 'displayName' => 'הנסיך'];
+		elseif ($location === 'SuraMare')
+			$output = ['id' => 1, 'codeName' => 'suraMare', 'displayName' => 'סורה-מארה'];
+		elseif ($location === 'Malki')
+			$output = ['id' => 2, 'codeName' => 'malki', 'displayName' => 'מלכי'];
+		elseif ($location === 'CuckooNest')
+			$output = ['id' => 3, 'codeName' => 'cuckooNest', 'displayName' => 'קן הקוקיה'];
+		elseif ($location === 'God')
+			$output = [
 				['id' => 0, 'codeName' => 'prince', 'displayName' => 'הנסיך'],
 				['id' => 1, 'codeName' => 'suraMare', 'displayName' => 'סורה-מארה'],
 				['id' => 2, 'codeName' => 'malki', 'displayName' => 'מלכי'],
 				['id' => 3, 'codeName' => 'cuckooNest', 'displayName' => 'קן הקוקיה'],
 			];
 
-		echo json_encode($location);
+		echo json_encode($output);
 	}
 }

@@ -1,0 +1,52 @@
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal">&times;</button>
+    <h4 class="modal-title">{{ name }} - עריכת חשבונית / תעודה</h4>
+</div>
+<div class="modal-body clearfix">
+    <form name="editReceiptForm" novalidate>
+        <div class="row" style="font-size: 16px;">
+            <div class="col-md-3 col-sm-12 col-md-push-9">
+                <h4>
+                    <span>תאריך</span>
+                    <span>:</span>
+                    <input class="inputField" name="day" type="text" ng-model="receiptNewInfo.date" pattern="(^(((0[1-9]|1[0-9]|2[0-8])[\/](0[1-9]|1[012]))|((29|30|31)[\/](0[13578]|1[02]))|((29|30)[\/](0[4,6,9]|11)))[\/](19|[2-9][0-9])\d\d$)|(^29[\/]02[\/](19|[2-9][0-9])(00|04|08|12|16|20|24|28|32|36|40|44|48|52|56|60|64|68|72|76|80|84|88|92|96)$)" required/>
+                    <p class="error" ng-show="editReceiptForm.day.$error.pattern">format dd/mm/yyyy</p>
+                    <p class="error" ng-show="editReceiptForm.day.$error.required">הכנס תאריך</p>
+                </h4>
+            </div>
+            <div class="col-md-4 col-sm-12 col-md-push-2">
+                <h4>
+                    <span>מס' חשבונית</span>
+                    <span>:</span>
+                    <input name="serial" class="inputField" type="text" ng-model="receiptNewInfo.serial" required/>
+                </h4>
+            </div>
+            <div class="col-md-3 col-sm-12 col-md-pull-5">
+                <h4>
+                    <span>סכום</span>
+                    <span>:</span>
+                    <input name="amount" class="inputField" type="text" ng-model="receiptNewInfo.amount" pattern="^\d+(?:\.\d{1,2})?$" required style="max-width: 65%;"/>
+                    <p class="error" ng-show="editReceiptForm.amount.$error.pattern">סכום לא תקין</p>
+                </h4>
+            </div>
+            <div class="col-md-2 col-sm-12 col-md-pull-10" style="direction: ltr;">
+                <h4>
+                    <label class="radio-inline"><input type="radio" name="optradio" ng-model="receiptNewInfo.charge"
+                                                       value="1" required><span>חיוב</span></label>
+                    <label class="radio-inline"><input type="radio" name="optradio" ng-model="receiptNewInfo.charge"
+                                                       value="0" required><span>זיכוי</span></label>
+                </h4>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="modal-footer">
+    <div class="btn-group btn-group-justified" style="direction: ltr;">
+        <button class="btn btn-success" ng-click="showEditReceipt()" ng-disabled="
+            editReceiptForm.day.$error.required || editReceiptForm.day.$error.pattern || editReceiptForm.serial.$error.required ||
+            editReceiptForm.amount.$error.required || editReceiptForm.amount.$error.pattern || editReceiptForm.optradio.$error.required" style="width: auto">
+            <span class="glyphicon glyphicon-ok"></span>
+        </button>
+        <button class="btn btn-danger" ng-click="closeEditReceipt()" style="width: auto"><span class="glyphicon glyphicon-remove"></span></button>
+    </div>
+</div>

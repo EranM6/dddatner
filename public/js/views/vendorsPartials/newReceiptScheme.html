@@ -1,0 +1,46 @@
+<form name="newReceiptForm" novalidate>
+    <div class="row" style="font-size: 16px;">
+        <div class="col-md-3 col-sm-12 col-md-push-9">
+            <h5>
+                <span>תאריך</span>
+                <span>:</span>
+                <span>{{ selectedMonth.month }}/{{ selectedMonth.year }}/</span>
+                <input type="text" name="day" class="inputField" ng-model="newReceipt.date" style="max-width: 30%;" pattern="\d*" required/>
+                <p class="error" ng-show="newReceiptForm.day.$error.pattern">זה לא מספר</p>
+                <p class="error" ng-show="newReceipt.date > lastPosibleDate">תאריך לא נכון</p>
+                <p class="error" ng-show="newReceipt.date < 1">אין יום כזה</p>
+            </h5>
+        </div>
+        <div class="col-md-3 col-sm-12 col-md-push-3">
+            <h5>
+                <span>מס' חשבונית</span>
+                <span>:</span>
+                <input name="serial" class="inputField" type="text" ng-model="newReceipt.serial" required>
+            </h5>
+        </div>
+        <div class="col-md-2 col-sm-12 col-md-pull-2">
+            <h5>
+                <span>סכום</span>
+                <span>:</span>
+                <input name="amount" class="inputField" type="text" ng-model="newReceipt.amount" pattern="^\d+(?:\.\d{1,2})?$" required style="max-width: 65%;"/>
+                <p class="error" ng-show="newReceiptForm.amount.$error.pattern">סכום לא תקין</p>
+            </h5>
+        </div>
+        <div class="col-md-2 col-sm-12 col-md-pull-6" style="direction: ltr;">
+            <h5>
+                <label class="radio-inline"><input type="radio" name="optradio" ng-model="newReceipt.charge"
+                                                   value="1" required><span>חיוב</span></label>
+                <label class="radio-inline"><input type="radio" name="optradio" ng-model="newReceipt.charge"
+                                                   value="0" required><span>זיכוי</span></label>
+            </h5>
+        </div>
+        <div class="btn-group col-md-2 col-sm-12 col-md-pull-10" style="direction: ltr;">
+            <button class="btn btn-success" ng-click="showNewReceipt()" ng-disabled="
+            newReceiptForm.day.$error.required || newReceiptForm.day.$error.pattern || newReceipt.date > lastPosibleDate || newReceipt.date < 1 ||
+            newReceiptForm.serial.$error.required || newReceiptForm.amount.$error.required || newReceiptForm.amount.$error.pattern || newReceiptForm.optradio.$error.required">
+                <span class="glyphicon glyphicon-ok"></span>
+            </button>
+            <button class="btn btn-danger" ng-click="cancelNewReceipt()"><span class="glyphicon glyphicon-remove"></span></button>
+        </div>
+    </div>
+</form>

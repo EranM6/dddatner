@@ -1,22 +1,70 @@
-<h1>קטלוג מוצרים / מחירון</h1>
-<div class="row">
-    <div class="col-md-4 col-sm-12" ng-repeat="(key, value) in vendorProducts" ng-class="{edited: toggleEditedClass[key]}">
-        <span>{{ value.name }}</span>
-        <span> {{ value.price }}</span>
-        ש"ח
-        <span ng-if="value.measurement == '1'">לקילו</span>
-        <span ng-if="value.measurement == '0'">ליחידה</span>
-        <span class="glyphicon glyphicon-edit" ng-click="editProduct(key)"></span>
-    </div>
-    <div class="col-md-4 col-sm-12 newProduct" ng-repeat="(key, value) in newProducts">
-        <span>{{ value.name }}</span>
-        <span> {{ value.price }}</span>
-        ש"ח
-        <span ng-if="value.measurement == '1'">לקילו</span>
-        <span ng-if="value.measurement == '0'">ליחידה</span>
-        <span class="glyphicon glyphicon-edit" ng-click="editProduct(key)"></span>
+<div id="productModal" class="modal fade" data-backdrop="static" data-keyboard="false" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <product-modal-directive></product-modal-directive>
+        </div>
     </div>
 </div>
+<h1>קטלוג מוצרים / מחירון</h1>
+<table class="table table-bordered table-hover table-condensed table-responsive row">
+    <tr class="productElement col-md-4 col-sm-12" ng-repeat="(key, product) in vendorProducts" ng-class="{edited: editedProducts[product.id]}">
+        <td class="row" ng-if="!editedProducts[product.id]">
+            <p class="col-sm-4 col-sm-push-8">
+                <span>{{ product.name }}</span>
+            </p>
+            <p class="col-sm-3 col-sm-push-1">
+                <span> {{ product.price }}</span>
+                <span>ש"ח</span>
+            </p>
+            <p class="col-sm-3 col-sm-pull-5">
+                <span ng-if="product.measurement == '1'">לקילו</span>
+                <span ng-if="product.measurement == '0'">ליחידה</span>
+            </p>
+            <p class="col-sm-2 col-sm-pull-10">
+                <span class="glyphicon glyphicon-edit" ng-click="editProduct(product.id)"></span>
+            </p>
+        </td>
+
+        <td class="row" ng-if="editedProducts[product.id]">
+            <p class="col-sm-4 col-sm-push-8">
+                <span>{{ editedProducts[product.id].name }}</span>
+            </p>
+            <p class="col-sm-3 col-sm-push-1">
+                <span> {{ editedProducts[product.id].price }}</span>
+                <span>ש"ח</span>
+            </p>
+            <p class="col-sm-3 col-sm-pull-5">
+                <span ng-if="editedProducts[product.id].measurement == '1'">לקילו</span>
+                <span ng-if="editedProducts[product.id].measurement == '0'">ליחידה</span>
+            </p>
+            <p class="col-sm-2 col-sm-pull-10">
+                <span class="glyphicon glyphicon-edit" ng-click="reEditProduct(product.id)"></span>
+                <span class="glyphicon glyphicon-repeat" ng-click="resetProduct(product.id)"></span>
+            </p>
+        </td>
+    </tr>
+    <tr class="productElement col-md-4 col-sm-12 newProduct" ng-repeat="product in newProducts">
+        <td class="row">
+            <p class="col-sm-4 col-sm-push-8">
+                <span>{{ product.name }}</span>
+            </p>
+            <p class="col-sm-3 col-sm-push-1">
+                <span> {{ product.price }}</span>
+                <span>ש"ח</span>
+            </p>
+            <p class="col-sm-3 col-sm-pull-5">
+                <span ng-if="product.measurement == '1'">לקילו</span>
+                <span ng-if="product.measurement == '0'">ליחידה</span>
+            </p>
+            <p class="col-sm-2 col-sm-pull-10">
+                <span class="glyphicon glyphicon-edit" ng-click="editNewProduct($index)"></span>
+                <span class="glyphicon glyphicon-remove" ng-click="removeNewProduct($index)"></span>
+            </p>
+        </td>
+    </tr>
+</table>
 <new-product-directive ng-show="addProduct"></new-product-directive>
-<button type="button" class="btn btn-success btn-block" ng-click="saveNewProducts()" ng-show="newProducts.length > 0 || editedProducts.length > 0">שמור שינויים</button>
-<button type="button" class="btn btn-info btn-block" ng-click="addProduct = true" ng-disabled="addProduct">הוסף מוצר</button>
+<button type="button" class="btn btn-success btn-block" ng-click="saveNewProducts()" ng-show="newProducts.length > 0 || productsEditCount > 0">שמור שינויים</button>
+<button type="button" class="btn btn-info btn-block" ng-click="openProductScheme()" ng-disabled="addProduct">הוסף מוצר</button>
