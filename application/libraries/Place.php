@@ -13,7 +13,10 @@ class Place {
 		if ($query->result()) {
 			$results['category'] = 'vendors';
 			foreach ($query->result() as $row) {
-				$vendors[$row->id] = $row->name;
+				$vendors[$row->id] = [
+					"id" =>$row->id,
+					"name" =>$row->name
+				];
 			}
 
 			$results['vendors'] = $vendors;

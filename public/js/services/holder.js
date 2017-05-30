@@ -3,6 +3,7 @@
 dddatner.service("holder", ["$http", holderFunction]);
 
 function holderFunction() {
+
     var activeVendorId = null;
     var selectedMonth = null;
 

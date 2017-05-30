@@ -9,16 +9,16 @@
 </div>
 <h1>קטלוג מוצרים / מחירון</h1>
 <table class="table table-bordered table-hover table-condensed table-responsive row">
-    <tr class="productElement col-md-4 col-sm-12" ng-repeat="(key, product) in vendorProducts" ng-class="{edited: editedProducts[product.id]}">
-        <td class="row" ng-if="!editedProducts[product.id]">
+    <tr class="productElement col-md-4 col-sm-12" ng-repeat="(key, product) in vendorProducts | orderObjectBy:'name'" ng-class="{edited: editedProducts[product.id]}">
+        <td class="row clearfix" ng-if="!editedProducts[product.id]">
             <p class="col-sm-4 col-sm-push-8">
-                <span>{{ product.name }}</span>
+                {{ product.name }}
             </p>
-            <p class="col-sm-3 col-sm-push-1">
+            <p class="col-sm-3 col-sm-push-5">
                 <span> {{ product.price }}</span>
                 <span>ש"ח</span>
             </p>
-            <p class="col-sm-3 col-sm-pull-5">
+            <p class="col-sm-3 col-sm-pull-7">
                 <span ng-if="product.measurement == '1'">לקילו</span>
                 <span ng-if="product.measurement == '0'">ליחידה</span>
             </p>
@@ -29,13 +29,13 @@
 
         <td class="row" ng-if="editedProducts[product.id]">
             <p class="col-sm-4 col-sm-push-8">
-                <span>{{ editedProducts[product.id].name }}</span>
+                <p>{{ editedProducts[product.id].name }}</p>
             </p>
-            <p class="col-sm-3 col-sm-push-1">
+            <p class="col-sm-3 col-sm-push-5">
                 <span> {{ editedProducts[product.id].price }}</span>
                 <span>ש"ח</span>
             </p>
-            <p class="col-sm-3 col-sm-pull-5">
+            <p class="col-sm-3 col-sm-pull-7">
                 <span ng-if="editedProducts[product.id].measurement == '1'">לקילו</span>
                 <span ng-if="editedProducts[product.id].measurement == '0'">ליחידה</span>
             </p>
@@ -45,16 +45,16 @@
             </p>
         </td>
     </tr>
-    <tr class="productElement col-md-4 col-sm-12 newProduct" ng-repeat="product in newProducts">
+    <tr class="productElement col-md-4 col-sm-12 newProduct" ng-repeat="product in newProducts | orderBy:'name'">
         <td class="row">
             <p class="col-sm-4 col-sm-push-8">
-                <span>{{ product.name }}</span>
+                <p>{{ product.name }}</p>
             </p>
-            <p class="col-sm-3 col-sm-push-1">
+            <p class="col-sm-3 col-sm-push-5">
                 <span> {{ product.price }}</span>
                 <span>ש"ח</span>
             </p>
-            <p class="col-sm-3 col-sm-pull-5">
+            <p class="col-sm-3 col-sm-pull-7">
                 <span ng-if="product.measurement == '1'">לקילו</span>
                 <span ng-if="product.measurement == '0'">ליחידה</span>
             </p>

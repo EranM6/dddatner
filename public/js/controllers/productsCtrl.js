@@ -70,7 +70,7 @@ function productsCtrl($scope, $state, $timeout, dbModel, products) {
         dbModel.addProducts({newProducts: $scope.newProducts, editProducts: $scope.editedProducts})
             .then(function (data) {
                     if (data.data.new) {
-                        var firstId = data.data.firstId;
+                        var firstId = data.data.new.firstId;
                         for (var i = 0; i < $scope.newProducts.length; i++) {
                             $scope.newProducts[i].id = firstId;
                             $scope.vendorProducts[firstId] = $scope.newProducts[i];

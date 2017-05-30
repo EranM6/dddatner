@@ -48,7 +48,7 @@ module.exports = function(grunt) {
                 },
                 src: './public/minified.js/',
                 dest: '/htdocs/dddatner/public/minified.js/',
-                exclusions: ['./public/minified.js/dddatner.js']
+                exclusions: ['./public/minified.js/dddatner.min.js']
             }
         },
         watch: {

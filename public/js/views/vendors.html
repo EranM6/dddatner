@@ -6,9 +6,9 @@
 <div>
     <div class="list-group col-md-3 col-sm-12 col-md-push-9"
          style="height: 100%; overflow-y: auto; padding: 15px;">
-        <a href="#" class="list-group-item" ng-repeat="(key, value) in vendors" ng-click="getVendor(key)"
-           data-ng-class="{'active' : toggleListItem.item == key}">
-            {{ value }}
+        <a href="#" class="list-group-item" ng-repeat="vendor in vendors | orderObjectBy: 'name'" ng-click="getVendor(vendor.id)"
+           data-ng-class="{'active' : toggleListItem.item == vendor.id}">
+            {{ vendor.name }}
         </a>
         <button class="btn btn-success btn-block" type="button" ng-click="addVendor()">הוסף ספק חדש</button>
     </div>

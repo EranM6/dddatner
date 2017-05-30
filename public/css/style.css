@@ -1,3 +1,8 @@
+.clearfix::after {
+    display: block;
+    content: "";
+    clear: both;
+}
 
 * {
     box-sizing: border-box;
@@ -105,12 +110,77 @@ div[id*="Modal"] > .modal-dialog {
     text-align: center;
     border-radius: 15px;
     box-shadow: 4px 4px 6px black;
+    position: relative;
+    height: 3rem;
 }
 
 .productElement > td > p {
-    padding: 0;
+    padding: 0 1px;
     margin: auto;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
+    -webkit-transition: 0.5s;
+    -moz-transition: 0.5s;
+    transition: 0.5s;
+    position: absolute;
+
+    -webkit-transition-timing-function: ease;
+    -moz-transition-timing-function: ease;
+    transition-timing-function: ease;
 }
+
+.productElement > td > p:first-of-type {
+    right: 0;
+    height: 100%;
+    line-height: 2;
+    top: 0;
+}
+
+.productElement > td > p:first-of-type:hover {
+    background-color: rgb(255, 157, 158);
+    width: 100%;
+    height: 100%;
+    right: 0;
+    top: 0;
+    line-height: 2;
+    z-index: 666;
+    border-radius: 15px;
+    border: 1px solid #f00;
+}
+/*.productElement > td > p:hover {
+    -webkit-animation: INDENT 2s 1; // Safari 4+
+    -moz-animation:    INDENT 2s 1; // Fx 5+
+    -o-animation:      INDENT 2s 1; // Opera 12+
+    animation:         INDENT 2s 1; // IE 10+
+}
+
+@-webkit-keyframes INDENT{
+    0%   { text-indent: 0; }
+    25% { text-indent: -55px; }
+    75% { text-indent: -55px; }
+    100% { text-indent: 0; }
+}
+@-moz-keyframes INDENT {
+    0%   { text-indent: 0; }
+    25% { text-indent: -55px; }
+    75% { text-indent: -55px; }
+    100% { text-indent: 0; }
+}
+@-o-keyframes INDENT {
+    0%   { text-indent: 0; }
+    25% { text-indent: -55px; }
+    75% { text-indent: -55px; }
+    100% { text-indent: 0; }
+}
+@keyframes INDENT {
+    0%   { text-indent: 0; }
+    25% { text-indent: -55px; }
+    75% { text-indent: -55px; }
+    100% { text-indent: 0; }
+}*/
+
 
 .newProduct {
     color: #449d44;

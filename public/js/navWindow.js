@@ -1,11 +1,10 @@
-(function() {
-    'use strict';
+var navWindow = angular.module('navWindow', ['ngMaterial']);
 
-    var navWindow = angular.module('navWindow', ['ngMaterial'])
-        .controller('AppCtrl', AppCtrl);
 
-    function AppCtrl($scope) {
-        $scope.currentNavItem = 'page1';
-    }
-})();
+navWindow.controller('AppCtrl', ["$scope", AppCtrl]);
+
+function AppCtrl($scope) {
+    $scope.currentNavItem = 'page1';
+}
+
 
