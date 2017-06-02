@@ -3,64 +3,90 @@
 
 class Place {
 
-	static function getVendors() {
-		$conn = getConnection();
+	static function getPlaces($name = null){
+		$conn = validConnection();
+		$conn->load->database();
 
-		$sql = "SELECT company_name AS name, id FROM vendors";
-		$query = $conn->query($sql);
+		if(!isset($name)){
+			$sql = "SELECT * FROM places";
+		}else{
+			$sql = "SELECT * FROM places WHERE eng_name = '{$name}'";
+		}
+
+		$query = $conn->db->query($sql);
 
 		$results = null;
 		if ($query->result()) {
-			$results['category'] = 'vendors';
 			foreach ($query->result() as $row) {
-				$vendors[$row->id] = [
-					"id" =>$row->id,
-					"name" =>$row->name
+				$results[] = [
+					'id' => $row->id,
+					'heb_name' => $row->heb_name,
+					'eng_name' => $row->eng_name,
+
 				];
 			}
-
-			$results['vendors'] = $vendors;
 		}
-
 		return $results;
 	}
 
-	static function getVendor($id) {
-		$conn = getConnection();
+	static function getVendors($id = null) {
+		$conn = validConnection();
+		$conn->load->database();
+		if (!isset($id)) {
 
-		$sql = "SELECT * FROM vendors WHERE id = (" . $conn->escape($id) . ")";
-		$query = $conn->query($sql);
+			$sql = "SELECT company_name AS name, id FROM vendors";
+			$query = $conn->db->query($sql);
 
-		$results = null;
-		if ($query->result()) {
+			$results = null;
+			if ($query->result()) {
+				$results['category'] = 'vendors';
+				foreach ($query->result() as $row) {
+					$vendors[$row->id] = [
+						"id" => $row->id,
+						"name" => $row->name
+					];
+				}
 
-			foreach ($query->result() as $row) {
-				$vendor = [
-					'id' => $row->id,
-					'name' => $row->company_name,
-					'agent' => [
-						'name' => $row->agent_name,
-						'phoneNumber' => $row->agent_number
-					],
-					'driver' => [
-						'name' => $row->driver_name,
-						'phoneNumber' => $row->driver_number
-					],
-					'orders' => [
-						'phoneNumber' => $row->orders_number,
-						'minimum' => $row->minimum_order
-					],
-					'discount' => $row->discount
-				];
+				$results['vendors'] = $vendors;
 			}
-			$results['vendor'] = $vendor;
-		}
+		} else {
 
+			$sql = "SELECT * FROM vendors WHERE id = (" . $conn->db->escape($id) . ")";
+			$query = $conn->db->query($sql);
+
+			$results = null;
+			if ($query->result()) {
+
+				foreach ($query->result() as $row) {
+					$vendor = [
+						'id' => $row->id,
+						'name' => $row->company_name,
+						'agent' => [
+							'name' => $row->agent_name,
+							'phoneNumber' => $row->agent_number
+						],
+						'driver' => [
+							'name' => $row->driver_name,
+							'phoneNumber' => $row->driver_number
+						],
+						'orders' => [
+							'phoneNumber' => $row->orders_number,
+							'minimum' => $row->minimum_order,
+							'days' => json_decode($row->orders_days),
+							'hours' => json_decode($row->orders_hours)
+						],
+						'discount' => $row->discount
+					];
+				}
+				$results['vendor'] = $vendor;
+			}
+		}
 		return $results;
 	}
 
 	static function addVendor($data) {
-		$conn = getConnection();
+		$conn = validConnection();
+		$conn->load->database();
 
 		$conn->insert('vendors', $data);
 
@@ -68,7 +94,8 @@ class Place {
 	}
 
 	static function updateVendor($id, $data) {
-		$conn = getConnection();
+		$conn = validConnection();
+		$conn->load->database();
 
 		$where = "id = {$id}";
 		$query = $conn->update('vendors', $data, $where);
@@ -77,10 +104,11 @@ class Place {
 	}
 
 	static function getProductsByVendor($id) {
-		$conn = getConnection();
+		$conn = validConnection();
+		$conn->load->database();
 
-		$sql = "SELECT * FROM products WHERE vendorId = (" . $conn->escape($id) . ")";
-		$query = $conn->query($sql);
+		$sql = "SELECT * FROM products WHERE vendorId = (" . $conn->db->escape($id) . ")";
+		$query = $conn->db->query($sql);
 
 		$results = null;
 		if ($query->result()) {
@@ -102,7 +130,8 @@ class Place {
 
 	static function addProducts($data) {
 		$result = null;
-		$conn = getConnection();
+		$conn = validConnection();
+		$conn->load->database();
 
 		if ($data['newData']) {
 			$count = count($data['newData']);
@@ -127,7 +156,9 @@ class Place {
 	}
 
 	static function getReceiptsByVendor($id, $month, $year) {
-		$conn = getConnection();
+		$conn = validConnection();
+		$conn->load->database();
+		$placeId = getLocation();
 
 		$receiptsQuery =
 			<<<SQL
@@ -136,17 +167,19 @@ SELECT
 FROM 
 	receipts
 WHERE 
-	`vendorId` = {$conn->escape($id)}
-AND (
-	YEAR(`date`) = {$conn->escape($year)} 
+	`vendorId` = {$conn->db->escape($id)}
 AND
-	MONTH(`date`) = {$conn->escape($month)}
+	`placeId` = {$placeId}
+AND (
+	YEAR(`date`) = {$conn->db->escape($year)} 
+AND
+	MONTH(`date`) = {$conn->db->escape($month)}
 	)
 ORDER BY 
 	`date`;
 SQL;
 
-		$query = $conn->query($receiptsQuery);
+		$query = $conn->db->query($receiptsQuery);
 
 
 		$results = null;
@@ -166,17 +199,18 @@ SQL;
 		}
 
 		if ($results) {
-			$details = self::getVendorReceiptsDetails($conn, $id, $month, $year);
+			$details = self::getVendorReceiptsDetails($conn, $placeId, $id, $month, $year);
 
 			$results['charge'] = $details['charge'];
 			$results['refund'] = $details['refund'];
 			$results['notApproved'] = $details['notApproved'];
-			$results['closed'] = self::checkForClosedMonth($id, $month, $year);
 		}
+
+		$results['closed'] = self::checkForClosedMonth($id, $month, $year);
 		return $results;
 	}
 
-	static function getVendorReceiptsDetails($conn, $id, $month, $year) {
+	static function getVendorReceiptsDetails($conn, $placeId, $id, $month, $year) {
 		$sql =
 			<<<SQL
 SELECT
@@ -185,6 +219,8 @@ FROM
   receipts
 WHERE
   vendorId = {$id}
+AND
+	placeId = {$placeId}
   AND (
     YEAR(`date`) = {$year}
     AND
@@ -199,6 +235,8 @@ FROM
   receipts
 WHERE
   vendorId = {$id}
+AND
+	placeId = {$placeId}
   AND (
     YEAR(`date`) = {$year}
     AND
@@ -213,13 +251,15 @@ WHERE
   approved = '0'
 AND
   vendorId = {$id}
+AND
+	placeId = {$placeId}
 AND (
     YEAR(`date`) = {$year}
   AND
     MONTH(`date`) = {$month}
       );
 SQL;
-		$query = $conn->query($sql);
+		$query = $conn->db->query($sql);
 
 		$details = [];
 		if ($query->result()) {
@@ -233,7 +273,9 @@ SQL;
 
 	static function addReceipts($data) {
 		$result = null;
-		$conn = getConnection();
+		$conn = validConnection();
+		$conn->load->database();
+		$placeId = getLocation();
 
 		if ($data['newData']) {
 			$count = count($data['newData']);
@@ -242,12 +284,13 @@ SQL;
 			foreach ($data['newData'] as $value) :
 				$value =
 					<<<VAL
-({$value['date']}, 
-{$value['vendorId']}, 
-{$value['serial']}, 
-{$value['amount']}, 
-{$value['charge']}, 
-{$value['approved']}),
+(STR_TO_DATE('{$value['date']}', '%d/%m/%Y'), 
+'{$value['vendorId']}', 
+'{$value['serial']}', 
+'{$value['amount']}', 
+'{$value['charge']}', 
+'{$value['approved']}',
+'{$placeId}'),
 VAL;
 
 				$values .= $value;
@@ -257,7 +300,7 @@ VAL;
 			$sql =
 				<<<SQL
 INSERT INTO
- 	receipts(date, vendorId, serial, amount, charge, approved)
+ 	receipts(date, vendorId, serial, amount, charge, approved, placeId)
 VALUES {$values};
 SQL;
 			$conn->query($sql);
@@ -278,12 +321,13 @@ SQL;
 					<<<VAL
 UPDATE receipts
 SET 
- 	date = {$value['date']}, 
- 	vendorId = {$value['vendorId']}, 
- 	serial = {$value['serial']}, 
- 	amount = {$value['amount']}, 
- 	charge = {$value['charge']}, 
- 	approved = {$value['approved']}
+ 	date = STR_TO_DATE('{$value['date']}', '%d/%m/%Y'), 
+ 	vendorId = '{$value['vendorId']}', 
+ 	serial = '{$value['serial']}', 
+ 	amount = '{$value['amount']}', 
+ 	charge = '{$value['charge']}', 
+ 	approved = '{$value['approved']}',
+ 	placeId = '{$placeId}'
 WHERE id = '{$value['id']}';
 VAL;
 
@@ -320,13 +364,15 @@ VAL;
 	}
 
 	static function closeMonth($month, $year, $vendorId, $charge, $refund) {
-		$conn = getConnection();
+		$conn = validConnection();
+		$conn->load->database();
+		$placeId = getLocation();
 
 		$sql =
 			<<<SQL
 INSERT INTO
- 	history(month, year, vendorId, charge, refund)
-VALUES ({$month}, {$year}, {$vendorId}, {$charge}, {$refund});
+ 	history(month, year, vendorId, charge, refund, placeId)
+VALUES ({$month}, {$year}, {$vendorId}, {$charge}, {$refund}, {$placeId});
 SQL;
 		$conn->query($sql);
 
@@ -334,7 +380,9 @@ SQL;
 	}
 
 	static function checkForClosedMonth($vendorId, $month, $year) {
-		$conn = getConnection();
+		$conn = validConnection();
+		$conn->load->database();
+		$placeId = getLocation();
 
 		$sql =
 			<<<SQL
@@ -345,13 +393,15 @@ SELECT EXISTS(
 	WHERE 
 		vendorId = {$vendorId}
 	AND
+		placeId = {$placeId}
+	AND
 		month = {$month}
 	AND
 		year = {$year}
 	)AS exist
 SQL;
 
-		$query = $conn->query($sql);
+		$query = $conn->db->query($sql);
 
 		if ($query->result()[0]->exist == 1) {
 			return TRUE;
@@ -362,7 +412,9 @@ SQL;
 	}
 
 	static function getHistory($id) {
-		$conn = getConnection();
+		$conn = validConnection();
+		$conn->load->database();
+		$placeId = getLocation();
 
 		$sql = <<<SQL
 SELECT *
@@ -370,10 +422,12 @@ FROM
   history
 WHERE
   vendorId = {$id}
+AND
+	placeId = {$placeId}
 ORDER BY year DESC, month;
 SQL;
 
-		$query = $conn->query($sql);
+		$query = $conn->db->query($sql);
 
 		$results = null;
 		if ($query->result()) {

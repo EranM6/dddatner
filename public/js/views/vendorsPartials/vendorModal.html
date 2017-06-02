@@ -3,52 +3,106 @@
     <h4 class="modal-title">{{ name }} - הוספת ספק חדש</h4>
 </div>
 <div class="modal-body clearfix">
-    <form novalidate>
+    <form name="newVendorForm" novalidate>
         <div class="col-md-12 col-sm-12">
             <h4>
-                <span>שם הספק</span>
+                <label for="name">שם הספק</label>
                 <span>:</span>
-                <input class="inputField" type="text" ng-model="newVendorInfo.name">
+                <input name="name" id="name" class="inputField" type="text" ng-model="newVendorInfo.name" required>
             </h4>
         </div>
         <div class="col-md-4 col-sm-12 col-md-push-8 ">
-            <h4>סוכן/ת</h4>
-            <p>
-                <span>שם</span>
-                <span>:</span>
-                <input class="inputField" type="text" ng-model="newVendorInfo.agent.name">
-            </p>
-            <p>
-                <span>טלפון</span>
-                <span>:</span>
-                <input class="inputField" type="text" ng-model="newVendorInfo.agent.phoneNumber">
-            </p>
+                <h4>סוכן/ת</h4>
+                <p>
+                    <label for="agentName">שם</label>
+                    <span>:</span>
+                    <input name="agentName" id="agentName" class="inputField" type="text" ng-model="newVendorInfo.agent.name">
+                </p>
+                <p>
+                    <label for="agentPhoneNumber">טלפון</label>
+                    <span>:</span>
+                    <input name="agentPhoneNumber" id="agentPhoneNumber" class="inputField" type="text" ng-model="newVendorInfo.agent.phoneNumber">
+                </p>
         </div>
         <div class="col-md-4 col-sm-12">
-            <h4>נהג/ת</h4>
-            <p>
-                <span>שם</span>
-                <span>:</span>
-                <input class="inputField" type="text" ng-model="newVendorInfo.driver.name">
-            </p>
-            <p>
-                <span>טלפון</span>
-                <span>:</span>
-                <input class="inputField" type="text" ng-model="newVendorInfo.driver.phoneNumber">
-            </p>
+                <h4>נהג/ת</h4>
+                <p>
+                    <label for="driverName">שם</label>
+                    <span>:</span>
+                    <input name="driverName" id="driverName" class="inputField" type="text" ng-model="newVendorInfo.driver.name">
+                </p>
+                <p>
+                    <label for="driverPhoneNumber">טלפון</label>
+                    <span>:</span>
+                    <input name="driverPhoneNumber" id="driverPhoneNumber" class="inputField" type="text" ng-model="newVendorInfo.driver.phoneNumber">
+                </p>
         </div>
         <div class="col-md-4 col-sm-12 col-md-pull-8">
-            <h4>מוקד הזמנות</h4>
-            <p>
-                <span>טלפון</span>
-                <span>:</span>
-                <input class="inputField" type="text" ng-model="newVendorInfo.orders.phoneNumber">
-            </p>
-            <p>
-                <span>מינימום הזמנה</span>
-                <span>:</span>
-                <input class="inputField" type="text" ng-model="newVendorInfo.orders.minimum">
-            </p>
+                <h4>מוקד הזמנות</h4>
+                <p>
+                    <label for="ordersPhoneNumber">טלפון</label>
+                    <span>:</span>
+                    <input name="ordersPhoneNumber" id="ordersPhoneNumber" class="inputField" type="text" ng-model="newVendorInfo.orders.phoneNumber">
+                </p>
+                <p>
+                    <label for="ordersMinimum">מינימום הזמנה</label>
+                    <span>:</span>
+                    <input name="ordersMinimum" id="ordersMinimum" class="inputField" type="text" ng-model="newVendorInfo.orders.minimum">
+                </p>
+                <p>
+                    <label for="ordersDays">ימי הזמנה</label>
+                    <span>:</span>
+                    <br>
+                    <select name="ordersDays" id="ordersDays" multiple class="selectField" ng-model="newVendorInfo.orders.days">
+                        <option value="1">ראשון</option>
+                        <option value="2">שני</option>
+                        <option value="3">שלישי</option>
+                        <option value="4">רביעי</option>
+                        <option value="5">חמישי</option>
+                        <option value="6">שישי</option>
+                        <option value="7">שבת</option>
+                    </select>
+                    <small>לבחירה מרובה לחץ shift / ctrl</small>
+                </p>
+                <div>
+                    <label>שעות הזמנה
+                        <span>:</span>
+                    </label>
+                    <span>  מ - </span>
+                    <input type="text" name="startMinutes" class="inputField" ng-model="newVendorInfo.orders.hours[1]" style="max-width: 10%;" ng-required="
+                    newVendorInfo.orders.hours[0] || newVendorInfo.orders.hours[2] || newVendorInfo.orders.hours[3]" pattern="\d*">
+                    <span>:</span>
+                    <input type="text" name="startHours" class="inputField" ng-model="newVendorInfo.orders.hours[0]" style="max-width: 10%;" ng-required="
+                    newVendorInfo.orders.hours[1] || newVendorInfo.orders.hours[2] || newVendorInfo.orders.hours[3]" pattern="\d*">
+                    <span>  עד - </span>
+                    <input type="text" name="endMinutes" class="inputField" ng-model="newVendorInfo.orders.hours[3]" style="max-width: 10%;" ng-required="
+                    newVendorInfo.orders.hours[0] || newVendorInfo.orders.hours[1] || newVendorInfo.orders.hours[2]" pattern="\d*">
+                    <span>:</span>
+                    <input type="text" name="endHours" class="inputField" ng-model="newVendorInfo.orders.hours[2]" style="max-width: 10%;" ng-required="
+                    newVendorInfo.orders.hours[0] || newVendorInfo.orders.hours[1] || newVendorInfo.orders.hours[3]" pattern="\d*">
+                    <p class="error" ng-show="
+                        newVendorForm.startHours.$error.required ||
+                        newVendorForm.startMinutes.$error.required ||
+                        newVendorForm.endHours.$error.required ||
+                        newVendorForm.endMinutes.$error.required
+                    ">מלא/י את כל השדות</p>
+                    <p class="error" ng-show="
+                        newVendorInfo.orders.hours[0] > 24 ||
+                        newVendorInfo.orders.hours[0] < 0 ||
+                        newVendorInfo.orders.hours[2] > 24 ||
+                        newVendorInfo.orders.hours[2] < 0 ||
+                        newVendorInfo.orders.hours[1] > 60 ||
+                        newVendorInfo.orders.hours[1] < 0 ||
+                        newVendorInfo.orders.hours[3] > 60 ||
+                        newVendorInfo.orders.hours[3] < 0
+                    ">שעה לא תקינה</p>
+                    <p class="error" ng-show="
+                        newVendorForm.startHours.$error.pattern ||
+                        newVendorForm.startMinutes.$error.pattern ||
+                        newVendorForm.endHours.$error.pattern ||
+                        newVendorForm.endMinutes.$error.pattern
+                    ">זה לא מספר</p>
+                </div>
         </div>
         <div class="col-md-12 col-sm-12">
             <h4>
@@ -60,8 +114,19 @@
     </form>
 </div>
 <div class="modal-footer">
-    <div class="btn-group btn-group-justified" style="direction: ltr;">
-        <a href="#" class="btn btn-success" ng-click="saveAddVendor()">שמור</a>
-        <a href="#" class="btn btn-danger" ng-click="cancelAddVendor()">ביטול</a>
+    <div class="btn-group" style="direction: ltr;">
+        <button class="btn btn-success" ng-click="saveAddVendor()" ng-disabled="
+                    newVendorForm.$invalid ||
+                    newVendorInfo.orders.hours[0] > 24 ||
+                    newVendorInfo.orders.hours[0] < 0 ||
+                    newVendorInfo.orders.hours[2] > 24 ||
+                    newVendorInfo.orders.hours[2] < 0 ||
+                    newVendorInfo.orders.hours[1] > 60 ||
+                    newVendorInfo.orders.hours[1] < 0 ||
+                    newVendorInfo.orders.hours[3] > 60 ||
+                    newVendorInfo.orders.hours[3] < 0 ">
+            <span>שמור</span>
+        </button>
+        <button class="btn btn-danger" ng-click="cancelAddVendor()"><span>ביטול</span></button>
     </div>
 </div>

@@ -1,0 +1,25 @@
+<div class="header row">
+    <div class="col-md-12 col-sm-12" style="text-align: center;">
+        <h1>{{ name }} - {{ section }}</h1>
+    </div>
+</div>
+<div>
+    <div class="list-group col-md-3 col-sm-12 col-md-push-9"
+         style="height: 100%; overflow-y: auto; padding: 15px;">
+        <a href="#" class="list-group-item" ng-repeat="vendor in vendors | orderObjectBy: 'name'" ng-click="getVendor(vendor.id)"
+           data-ng-class="{'active' : toggleListItem.item == vendor.id}">
+            {{ vendor.name }}
+        </a>
+    </div>
+    <div id="vendorModal" class="modal fade" data-backdrop="static" data-keyboard="false" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <vendor-modal-directive></vendor-modal-directive>
+            </div>
+        </div>
+    </div>
+
+
+</div>

@@ -4,7 +4,7 @@
             <h4>
                 <span>שם המוצר</span>
                 <span>:</span>
-                <input class="inputField" type="text" name="name" ng-model="newProduct.name" required/>
+                <input class="inputField" type="text" name="name" ng-model="newProduct.name" required focus-me="cleanForm"/>
             </h4>
         </div>
         <div class="col-md-3 col-sm-12 col-md-push-1">
@@ -24,8 +24,7 @@
             </h4>
         </div>
         <div class="btn-group col-md-2 col-sm-12 col-md-pull-10" style="direction: ltr;">
-            <button class="btn btn-success" ng-click="showNewProduct()" ng-disabled="
-            newProductForm.name.$error.required || newProductForm.amount.$error.required || newProductForm.amount.$error.pattern || newProductForm.optradio.$error.required">
+            <button class="btn btn-success" ng-click="showNewProduct()" ng-disabled="newProductForm.$invalid">
                 <span class="glyphicon glyphicon-ok"></span>
             </button>
             <button class="btn btn-danger" ng-click="cancelNewProduct()"><span class="glyphicon glyphicon-remove"></span></button>

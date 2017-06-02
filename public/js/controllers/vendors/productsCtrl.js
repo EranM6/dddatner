@@ -46,6 +46,9 @@ function productsCtrl($scope, $state, $timeout, dbModel, products) {
 
     $scope.openProductScheme = function () {
         $scope.addProduct = true;
+        $timeout(function(){
+            $scope.cleanForm = true;
+        }, 100);
     };
 
     $scope.cancelNewProduct = function () {
@@ -136,6 +139,10 @@ function productsCtrl($scope, $state, $timeout, dbModel, products) {
     $scope.$watch('editedProducts', function () {
         if ($scope.editedProducts)
             $scope.productsEditCount = Object.keys($scope.editedProducts).length;
+    }, true);
+
+    $scope.$watch('newProduct', function () {
+        $scope.cleanForm = !$scope.newProduct;
     }, true);
 
     /*var continueWithoutSaving = function () {

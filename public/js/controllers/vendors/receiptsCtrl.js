@@ -145,6 +145,9 @@ function receiptsCtrl($scope, $timeout, dbModel, holder, receipts) {
 
     $scope.openReceiptScheme = function(){
         $scope.addReceipt = true;
+        $timeout(function(){
+            $scope.cleanForm = true;
+        }, 100);
     };
 
     $scope.cancelNewReceipt = function () {
@@ -307,6 +310,10 @@ function receiptsCtrl($scope, $timeout, dbModel, holder, receipts) {
     $scope.$watch('vendorReceipts', function(){
         if($scope.vendorReceipts)
             $scope.countOfReceipts = Object.keys($scope.vendorReceipts).length;
+    }, true);
+
+    $scope.$watch('newReceipt', function () {
+        $scope.cleanForm = !$scope.newReceipt;
     }, true);
 
     var getSelectedMonth = function(month, year){
