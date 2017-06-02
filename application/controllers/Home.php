@@ -13,31 +13,38 @@ class Home extends CI_Controller {
 	}
 
 	public function setLocation() {
-		$postData = file_get_contents("php://input");
-		$location = json_decode($postData);
-
-		setLocation($location->location);
+		if (checkForUser()) {
+			$postData = file_get_contents("php://input");
+			$placeId = json_decode($postData);
+			$placeId = $placeId->placeId;
+			setLocation($placeId);
+		}
+		else{
+			show_error("goDie", 401, $heading = 'An Error Was Encountered');
+		}
+	}
+	public function getOut() {
+		killSession();
+		print_r($this->getLocation());
+		print_r($_SERVER['REMOTE_USER']);
+		show_error("goDie", 401, $heading = 'An Error Was Encountered');
 	}
 
 	public function getLocation() {
-		$output = null;
-		$location = getLocation();
-		if ($location === 'Prince')
-			$output = ['id' => 0, 'codeName' => 'prince', 'displayName' => 'הנסיך'];
-		elseif ($location === 'SuraMare')
-			$output = ['id' => 1, 'codeName' => 'suraMare', 'displayName' => 'סורה-מארה'];
-		elseif ($location === 'Malki')
-			$output = ['id' => 2, 'codeName' => 'malki', 'displayName' => 'מלכי'];
-		elseif ($location === 'CuckooNest')
-			$output = ['id' => 3, 'codeName' => 'cuckooNest', 'displayName' => 'קן הקוקיה'];
-		elseif ($location === 'God')
-			$output = [
-				['id' => 0, 'codeName' => 'prince', 'displayName' => 'הנסיך'],
-				['id' => 1, 'codeName' => 'suraMare', 'displayName' => 'סורה-מארה'],
-				['id' => 2, 'codeName' => 'malki', 'displayName' => 'מלכי'],
-				['id' => 3, 'codeName' => 'cuckooNest', 'displayName' => 'קן הקוקיה'],
-			];
+		if (checkForUser()) {
+			$output = null;
+			$user = getUser();
 
-		echo json_encode($output);
+			if ($user === 'God') {
+				$output = $this->place->getPlaces();
+			}else {
+				$output = $this->place->getPlaces(lcfirst($user))[0];
+				setLocation($output['id']);
+			}
+
+			echo json_encode ($output);
+		}else{
+			show_error("goDie", 401, $heading = 'An Error Was Encountered');
+		}
 	}
 }

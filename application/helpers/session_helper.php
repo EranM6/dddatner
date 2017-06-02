@@ -12,24 +12,34 @@ function loadSession(){
 }
 
 function setUserSession(){
-	loadSession()->session->set_userdata('user', $_SERVER['REMOTE_USER']);
+	loadSession()->session->set_userdata(['user' => $_SERVER['REMOTE_USER']]);
 	setLocation($_SERVER['REMOTE_USER']);
 }
 
+function checkForUser(){
+	$user = loadSession()->session->userdata('user');
+	return isset($user);
+}
+
+function killSession(){
+	session_unset();
+	loadSession()->session->sess_destroy();
+	$_SERVER['REMOTE_USER'] = null;
+}
+
+function getUser() {
+	return loadSession()->session->userdata('user');
+}
+
 function getLocation() {
-	return loadSession()->session->userdata('location');
+	return loadSession()->session->userdata('place');
 }
 
-function setLocation($location){
-	loadSession()->session->set_userdata('location', $location);
+function setLocation($placeId){
+	loadSession()->session->set_userdata('place', $placeId);
 }
 
-function business(){
-	$location = getLocation();
-	getInstance()->load->library(lcfirst($location));
-}
-
-function getConnection(){
+function validConnection(){
 	$CI = getInstance();
-	return $CI->load->database(lcfirst(getLocation()), TRUE);
+	return $CI;
 }

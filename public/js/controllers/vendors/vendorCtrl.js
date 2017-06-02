@@ -1,12 +1,11 @@
-dddatner.controller("vendorCtrl", ["$scope", "$stateParams", "$timeout", "dbModel", "holder", "data", vendorCtrl]);
+dddatner.controller("vendorCtrl", ["$scope", "$stateParams", "$timeout", "dbModel", "holder", "vendors", vendorCtrl]);
 
-function vendorCtrl($scope, $stateParams, $timeout, dbModel, holder, data) {
+function vendorCtrl($scope, $stateParams, $timeout, dbModel, holder, vendors) {
 
-    // var place = $stateParams.codeName;
     $scope.name = $stateParams.displayName;
     $scope.section = 'ספקים';
     $scope.loading = true;
-
+    $scope.newVendorInfo = {};
     $scope.vendors = {};
 
     var reset = function () {
@@ -37,19 +36,11 @@ function vendorCtrl($scope, $stateParams, $timeout, dbModel, holder, data) {
         $scope.toggleTabItem = {item: 0};
     };
 
-    if (data.status === 200) {
-        if (data.data.category === "vendors") {
-            $scope.vendors = data.data.vendors;
-        }
-    }
+    $scope.vendors = vendors.data.vendors;
 
     $scope.getVendor = function (id) {
         $scope.loading = true;
         reset();
-        var mainTab = jQuery(document).find('.md-nav-item.ng-scope.ng-isolate-scope')[0];
-        $timeout(function () {
-            angular.element(mainTab).triggerHandler('click');
-        });
         $scope.newProduct = null;
         $scope.newProducts = [];
         $scope.addProduct = false;
@@ -62,6 +53,12 @@ function vendorCtrl($scope, $stateParams, $timeout, dbModel, holder, data) {
         dbModel.getVendor(id)
             .then(function (data) {
                     $scope.vendorInfo = data.data.vendor;
+                    $scope.currentNavItem = 'info';
+                    var mainTab = jQuery(document).find('.md-nav-item.ng-scope.ng-isolate-scope')[0];
+                    $timeout(function () {
+                        angular.element(mainTab).triggerHandler('click');
+                    });
+
                 }
             )
             .catch(function (err) {
@@ -90,7 +87,9 @@ function vendorCtrl($scope, $stateParams, $timeout, dbModel, holder, data) {
             },
             orders: {
                 phoneNumber: null,
-                minimum: null
+                minimum: null,
+                days: null,
+                hours: null
             },
             discount: null
         };
@@ -106,11 +105,21 @@ function vendorCtrl($scope, $stateParams, $timeout, dbModel, holder, data) {
 
     $scope.saveAddVendor = function () {
         $scope.loading = true;
+        if ($scope.newVendorInfo.orders.hours)
+            for (var field in $scope.newVendorInfo.orders.hours) {
+                if ($scope.newVendorInfo.orders.hours[field]) {
+                    if ($scope.newVendorInfo.orders.hours[field] < 10)
+                        $scope.newVendorInfo.orders.hours[field] = '0' + $scope.newVendorInfo.orders.hours[field];
+                }else{
+                    $scope.newVendorInfo.orders.hours = null;
+                }
+            }
         dbModel.addVendor($scope.newVendorInfo)
             .then(function (data) {
                     var newId = data.data.newId;
                     console.log(newId);
-                    $scope.vendors[newId] = $scope.newVendorInfo.name;
+                    $scope.newVendorInfo.id = newId;
+                    $scope.vendors[newId] = $scope.newVendorInfo;
                     $scope.newVendorInfo = null;
                     jQuery("#vendorModal").modal('hide');
                     console.log($scope.vendors);
@@ -139,8 +148,18 @@ function vendorCtrl($scope, $stateParams, $timeout, dbModel, holder, data) {
     };
 
     $scope.saveEditVendor = function () {
-        $scope.loading = true;
+        if ($scope.vendorNewInfo.orders.hours)
+            for (var field in $scope.vendorNewInfo.orders.hours) {
+                if ($scope.vendorNewInfo.orders.hours[field]) {
+                    if ($scope.vendorNewInfo.orders.hours[field] < 10)
+                        $scope.vendorNewInfo.orders.hours[field] = '0' + $scope.vendorNewInfo.orders.hours[field];
+                }else{
+                    $scope.vendorNewInfo.orders.hours = null;
+                }
+            }
         if ($scope.validChange($scope.vendorInfo, $scope.vendorNewInfo)) {
+            $scope.vendors[$scope.vendorNewInfo.id].name = $scope.vendorNewInfo.name;
+            $scope.loading = true;
             dbModel.updateVendor($scope.vendorNewInfo)
                 .then(function (status) {
                         $scope.vendorInfo = angular.copy($scope.vendorNewInfo);
@@ -168,4 +187,5 @@ function vendorCtrl($scope, $stateParams, $timeout, dbModel, holder, data) {
     $scope.toggleLoad = function () {
         $scope.loading = !$scope.loading;
     };
+
 }

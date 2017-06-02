@@ -1,19 +1,27 @@
-<form novalidate>
+<form name="editVendorForm" novalidate>
     <h1>פרטי התקשרות</h1>
     <div class="row">
+        <div class="col-md-12 col-sm-12">
+            <h2>
+                <span>שם הספק</span>
+                <span>:</span>
+                <input name="name" id="name" class="inputField" type="text" ng-model="vendorNewInfo.name" ng-show="vendorNewInfo" required>
+                <span ng-hide="editMode">{{ vendorInfo.name }}</span>
+            </h2>
+        </div>
         <div class="col-md-4 col-sm-12 col-md-push-8 ">
             <h4>סוכן/ת</h4>
             <p>
-                <span>שם</span>
+                <label for="agentName">שם</label>
                 <span>:</span>
-                <input class="inputField" type="text" ng-model="vendorNewInfo.agent.name" ng-show="vendorNewInfo">
+                <input name="agentName" id="agentName" class="inputField" type="text" ng-model="vendorNewInfo.agent.name" ng-show="vendorNewInfo">
                 <span ng-hide="editMode">{{ vendorInfo.agent.name }}</span>
                 <span class="missingInfo" ng-hide="editMode || vendorInfo.agent.name">חסר</span>
             </p>
             <p>
-                <span>טלפון</span>
+                <label for="agentPhoneNumber">טלפון</label>
                 <span>:</span>
-                <input class="inputField" type="text" ng-model="vendorNewInfo.agent.phoneNumber" ng-show="vendorNewInfo">
+                <input name="agentPhoneNumber" id="agentPhoneNumber" class="inputField" type="text" ng-model="vendorNewInfo.agent.phoneNumber" ng-show="vendorNewInfo">
                 <span ng-hide="editMode">{{ vendorInfo.agent.phoneNumber }}</span>
                 <span class="missingInfo" ng-hide="editMode || vendorInfo.agent.phoneNumber">חסר</span>
             </p>
@@ -21,16 +29,16 @@
         <div class="col-md-4 col-sm-12">
             <h4>נהג/ת</h4>
             <p>
-                <span>שם</span>
+                <label for="driverName">שם</label>
                 <span>:</span>
-                <input class="inputField" type="text" ng-model="vendorNewInfo.driver.name" ng-show="vendorNewInfo">
+                <input name="driverName" id="driverName" class="inputField" type="text" ng-model="vendorNewInfo.driver.name" ng-show="vendorNewInfo">
                 <span ng-hide="editMode">{{ vendorInfo.driver.name }}</span>
                 <span class="missingInfo" ng-hide="editMode || vendorInfo.driver.name">חסר</span>
             </p>
             <p>
-                <span>טלפון</span>
+                <label for="driverPhoneNumber">טלפון</label>
                 <span>:</span>
-                <input class="inputField" type="text" ng-model="vendorNewInfo.driver.phoneNumber" ng-show="vendorNewInfo">
+                <input name="driverPhoneNumber" id="driverPhoneNumber" class="inputField" type="text" ng-model="vendorNewInfo.driver.phoneNumber" ng-show="vendorNewInfo">
                 <span ng-hide="editMode">{{ vendorInfo.driver.phoneNumber }}</span>
                 <span class="missingInfo" ng-hide="editMode || vendorInfo.driver.phoneNumber">חסר</span>
             </p>
@@ -38,19 +46,82 @@
         <div class="col-md-4 col-sm-12 col-md-pull-8">
             <h4>מוקד הזמנות</h4>
             <p>
-                <span>טלפון</span>
+                <label for="ordersPhoneNumber">טלפון</label>
                 <span>:</span>
-                <input class="inputField" type="text" ng-model="vendorNewInfo.orders.phoneNumber" ng-show="vendorNewInfo">
+                <input name="ordersPhoneNumber" id="ordersPhoneNumber" class="inputField" type="text" ng-model="vendorNewInfo.orders.phoneNumber" ng-show="vendorNewInfo">
                 <span ng-hide="editMode">{{ vendorInfo.orders.phoneNumber }}</span>
                 <span class="missingInfo" ng-hide="editMode || vendorInfo.orders.phoneNumber">חסר</span>
             </p>
             <p>
-                <span>מינימום הזמנה</span>
+                <label for="ordersMinimum">מינימום הזמנה</label>
                 <span>:</span>
-                <input class="inputField" type="text" ng-model="vendorNewInfo.orders.minimum" ng-show="vendorNewInfo">
+                <input name="ordersMinimum" id="ordersMinimum" class="inputField" type="text" ng-model="vendorNewInfo.orders.minimum" ng-show="vendorNewInfo">
                 <span ng-hide="editMode || vendorInfo.orders.minimum < 1">{{ vendorInfo.orders.minimum }}</span>
                 <span class="missingInfo" ng-hide="editMode || vendorInfo.orders.minimum > 0">אין מינימום הזמנה</span>
             </p>
+            <div>
+                <label for="ordersDays">ימי הזמנה</label>
+                <span>:</span>
+                <span class="missingInfo" ng-hide="editMode || vendorInfo.orders.days">חסר</span>
+                <br>
+                <select name="ordersDays" id="ordersDays" multiple class="selectField" ng-model="vendorNewInfo.orders.days" ng-show="vendorNewInfo">
+                    <option value="1">ראשון</option>
+                    <option value="2">שני</option>
+                    <option value="3">שלישי</option>
+                    <option value="4">רביעי</option>
+                    <option value="5">חמישי</option>
+                    <option value="6">שישי</option>
+                    <option value="7">שבת</option>
+                </select>
+                <small ng-show="vendorNewInfo">לבחירה מרובה לחץ shift / ctrl</small>
+                <ul ng-hide="editMode">
+                    <li class="daysList" ng-repeat="day in vendorInfo.orders.days">{{ day | dayName}}</li>
+                </ul>
+            </div>
+            <div>
+                <label>שעות הזמנה
+                    <span>:</span>
+                </label>
+                <span class="missingInfo" ng-hide="editMode || vendorInfo.orders.hours">חסר</span>
+                <span ng-show="editMode || vendorInfo.orders.hours">  מ - </span>
+                <span ng-hide="editMode">{{ vendorInfo.orders.hours[1] }}</span>
+                <input type="text" name="startMinutes" class="inputField" ng-model="vendorNewInfo.orders.hours[1]" ng-show="vendorNewInfo" style="max-width: 10%;" ng-required="
+                    vendorNewInfo.orders.hours[0] || vendorNewInfo.orders.hours[2] || vendorNewInfo.orders.hours[3]" pattern="\d*">
+                <span ng-show="editMode || vendorInfo.orders.hours">:</span>
+                <span ng-hide="editMode">{{ vendorInfo.orders.hours[0] }}</span>
+                <input type="text" name="startHours" class="inputField" ng-model="vendorNewInfo.orders.hours[0]" ng-show="vendorNewInfo" style="max-width: 10%;" ng-required="
+                    vendorNewInfo.orders.hours[1] || vendorNewInfo.orders.hours[2] || vendorNewInfo.orders.hours[3]" pattern="\d*">
+                <span ng-show="editMode || vendorInfo.orders.hours">  עד - </span>
+                <span ng-hide="editMode">{{ vendorInfo.orders.hours[3] }}</span>
+                <input type="text" name="endMinutes" class="inputField" ng-model="vendorNewInfo.orders.hours[3]" ng-show="vendorNewInfo" style="max-width: 10%;" ng-required="
+                    vendorNewInfo.orders.hours[0] || vendorNewInfo.orders.hours[1] || vendorNewInfo.orders.hours[2]" pattern="\d*">
+                <span ng-show="editMode || vendorInfo.orders.hours">:</span>
+                <span ng-hide="editMode">{{ vendorInfo.orders.hours[2] }}</span>
+                <input type="text" name="endHours" class="inputField" ng-model="vendorNewInfo.orders.hours[2]" ng-show="vendorNewInfo" style="max-width: 10%;" ng-required="
+                    vendorNewInfo.orders.hours[0] || vendorNewInfo.orders.hours[1] || vendorNewInfo.orders.hours[3]" pattern="\d*">
+            <p class="error" ng-show="
+                        editVendorForm.startHours.$error.required ||
+                        editVendorForm.startMinutes.$error.required ||
+                        editVendorForm.endHours.$error.required ||
+                        editVendorForm.endMinutes.$error.required
+                    ">מלא/י את כל השדות</p>
+            <p class="error" ng-show="
+                        vendorNewInfo.orders.hours[0] > 24 ||
+                        vendorNewInfo.orders.hours[0] < 0 ||
+                        vendorNewInfo.orders.hours[2] > 24 ||
+                        vendorNewInfo.orders.hours[2] < 0 ||
+                        vendorNewInfo.orders.hours[1] > 60 ||
+                        vendorNewInfo.orders.hours[1] < 0 ||
+                        vendorNewInfo.orders.hours[3] > 60 ||
+                        vendorNewInfo.orders.hours[3] < 0
+                    ">שעה לא תקינה</p>
+            <p class="error" ng-show="
+                        editVendorForm.startHours.$error.pattern ||
+                        editVendorForm.startMinutes.$error.pattern ||
+                        editVendorForm.endHours.$error.pattern ||
+                        editVendorForm.endMinutes.$error.pattern
+                    ">זה לא מספר</p>
+            </div>
         </div>
         <div class="col-md-12 col-sm-12">
             <h4>

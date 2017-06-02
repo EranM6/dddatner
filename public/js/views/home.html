@@ -1,4 +1,4 @@
-<nav class="navbar navbar-inverse">
+<nav class="navbar navbar-inverse" style="position: fixed; width: 100%; z-index: 667;">
     <div class="container-fluid">
         <div class="navbar-header">
             <a class="navbar-brand headTitle" href="#">
@@ -9,26 +9,35 @@
             <a class="navbar-brand headTitle" href="#">
                 <span>{{ today | date:'dd/MM/yyyy HH:mm:ss'}}</span>
             </a>
+            <a class="navbar-brand headTitle" href="#">
+                <span ng-click="getOut()" class="glyphicon glyphicon-log-out" style="line-height: 0">Exit</span>
+            </a>
         </ul>
         <ul ng-if="GOD" class="nav navbar-nav">
             <li class="active" ui-sref='.index'><a href="#">Home</a></li>
             <li class="dropdown" ng-repeat="business in location">
-                <a class="dropdown-toggle" data-toggle="dropdown" href="#" ng-click="setLocation(business.codeName)">{{ business.displayName | capitalize }}
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#" ng-click="setLocation(business.id)">{{ business.heb_name }}
                     <span class="caret"></span></a>
                 <ul class="dropdown-menu">
-                    <li ui-sref='.place.vendors({codeName: "{{ business.codeName}}", displayName: "{{ business.displayName}}", vendorId: "{{ activeVendorId }}"})'><a href="#">ספקים</a></li>
-                    <li ui-sref='.place.inventory({codeName: "{{ business.codeName}}", displayName: "{{ business.displayName}}"})'><a href="#">ספירות מלאי</a></li>
-                    <li ui-sref='.place.productTree({codeName: "{{ business.codeName}}", displayName: "{{ business.displayName}}"})'><a href="#">עץ מוצר</a></li>
+                    <li ui-sref='.vendors({displayName: "{{ business.heb_name}}"})'><a href="#">ספקים</a></li>
+                    <li ui-sref='.inventory({displayName: "{{ business.heb_name}}"})'><a href="#">ספירות מלאי</a></li>
+                    <li ui-sref='.productTree({displayName: "{{ business.heb_name}}"})'><a href="#">עץ מוצר</a></li>
                 </ul>
             </li>
         </ul>
         <ul ng-if="!GOD" class="nav navbar-nav">
-            <li class="active" ui-sref='.index'><a href="#">{{ location.displayName | capitalize }}</a></li>
-            <li ui-sref='.place.vendors({codeName: "{{ location.codeName}}", displayName: "{{ location.displayName}}"})'><a href="#">ספקים</a></li>
-            <li ui-sref='.place.inventory({codeName: "{{ location.codeName}}", displayName: "{{ location.displayName}}"})'><a href="#">ספירות מלאי</a></li>
-            <li ui-sref='.place.productTree({codeName: "{{ location.codeName}}", displayName: "{{ location.displayName}}"})'><a href="#">עץ מוצר</a></li>
+            <li class="active" ui-sref='.index'><a href="#">{{ location.heb_name }}</a></li>
+            <li ui-sref='.vendors({displayName: "{{ location.heb_name}}"})'><a href="#">ספקים</a></li>
+            <li ui-sref='.inventory({displayName: "{{ location.heb_name}}"})'><a href="#">ספירות מלאי</a></li>
+            <li ui-sref='.productTree({displayName: "{{ location.heb_name}}"})'><a href="#">עץ מוצר</a></li>
         </ul>
     </div>
 </nav>
 
-<div ui-view style="background-color: white;"></div>
+<div class="container" style="width: 95%;">
+    <dic class="row">
+        <div class="col-md-12 col-sm-12 row table-bordered" style="padding: 20px; margin-top: 70px">
+            <ui-view></ui-view>
+        </div>
+    </dic>
+</div>

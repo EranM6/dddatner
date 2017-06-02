@@ -5,7 +5,7 @@
                 <span>תאריך</span>
                 <span>:</span>
                 <span>{{ selectedMonth.month }}/{{ selectedMonth.year }}/</span>
-                <input type="text" name="day" class="inputField" ng-model="newReceipt.date" style="max-width: 30%;" pattern="\d*" required/>
+                <input type="text" name="day" class="inputField" ng-model="newReceipt.date" style="max-width: 30%;" pattern="\d*" focus-me="cleanForm" required/>
                 <p class="error" ng-show="newReceiptForm.day.$error.pattern">זה לא מספר</p>
                 <p class="error" ng-show="newReceipt.date > lastPosibleDate">תאריך לא נכון</p>
                 <p class="error" ng-show="newReceipt.date < 1">אין יום כזה</p>
@@ -35,9 +35,7 @@
             </h5>
         </div>
         <div class="btn-group col-md-2 col-sm-12 col-md-pull-10" style="direction: ltr;">
-            <button class="btn btn-success" ng-click="showNewReceipt()" ng-disabled="
-            newReceiptForm.day.$error.required || newReceiptForm.day.$error.pattern || newReceipt.date > lastPosibleDate || newReceipt.date < 1 ||
-            newReceiptForm.serial.$error.required || newReceiptForm.amount.$error.required || newReceiptForm.amount.$error.pattern || newReceiptForm.optradio.$error.required">
+            <button class="btn btn-success" ng-click="showNewReceipt()" ng-disabled="newReceiptForm.$invalid || newReceipt.date > lastPosibleDate || newReceipt.date < 1 ">
                 <span class="glyphicon glyphicon-ok"></span>
             </button>
             <button class="btn btn-danger" ng-click="cancelNewReceipt()"><span class="glyphicon glyphicon-remove"></span></button>

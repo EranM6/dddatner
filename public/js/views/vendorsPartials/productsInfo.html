@@ -29,7 +29,7 @@
 
         <td class="row" ng-if="editedProducts[product.id]">
             <p class="col-sm-4 col-sm-push-8">
-                <p>{{ editedProducts[product.id].name }}</p>
+                {{ editedProducts[product.id].name }}
             </p>
             <p class="col-sm-3 col-sm-push-5">
                 <span> {{ editedProducts[product.id].price }}</span>
@@ -48,7 +48,7 @@
     <tr class="productElement col-md-4 col-sm-12 newProduct" ng-repeat="product in newProducts | orderBy:'name'">
         <td class="row">
             <p class="col-sm-4 col-sm-push-8">
-                <p>{{ product.name }}</p>
+                {{ product.name }}
             </p>
             <p class="col-sm-3 col-sm-push-5">
                 <span> {{ product.price }}</span>

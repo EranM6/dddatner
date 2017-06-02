@@ -8,6 +8,9 @@ function dbModelFunction($http) {
     var urlBase = '/dddatner/';
 
     return {
+        getOut: function(){
+            return $http.get(urlBase + "home/getOut/");
+        },
         getLocation: function () {
             return $http.get(urlBase + "home/getLocation/");
         },

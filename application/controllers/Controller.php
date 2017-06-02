@@ -5,13 +5,16 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class Controller extends CI_Controller {
 
 	public function getVendors() {
-
-		echo json_encode($this->place->getVendors());
+		if (checkForUser()) {
+			echo json_encode($this->place->getVendors());
+		} else {
+			show_error("goDie", 401, $heading = 'An Error Was Encountered');
+		}
 	}
 
-	public function getVendor($id) {
 
-		echo json_encode($this->place->getVendor($id));
+	public function getVendor($id) {
+		echo json_encode($this->place->getVendors($id));
 	}
 
 	public function addVendor() {
@@ -27,7 +30,9 @@ class Controller extends CI_Controller {
 			'driver_number' => $request->driver->phoneNumber,
 			'orders_number' => $request->orders->phoneNumber,
 			'discount' => $request->discount,
-			'minimum_order' => $request->orders->minimum.' '
+			'minimum_order' => $request->orders->minimum,
+			'orders_days' => json_encode($request->orders->days),
+			'orders_hours' => json_encode($request->orders->hours)
 		];
 
 		echo json_encode($this->place->addVendor($data));
@@ -47,7 +52,9 @@ class Controller extends CI_Controller {
 			'driver_number' => $request->driver->phoneNumber,
 			'orders_number' => $request->orders->phoneNumber,
 			'discount' => $request->discount,
-			'minimum_order' => $request->orders->minimum.' '
+			'minimum_order' => $request->orders->minimum,
+			'orders_days' => json_encode($request->orders->days),
+			'orders_hours' => json_encode($request->orders->hours)
 		];
 
 		echo json_encode($this->place->updateVendor($id, $data));
@@ -107,7 +114,7 @@ class Controller extends CI_Controller {
 			foreach ($request -> newReceipts as $receipt) {
 
 				$newData[] = [
-					'date' => "STR_TO_DATE('".$receipt->date."', '%d/%m/%Y')",
+					'date' => $receipt->date,
 					'serial' => $receipt->serial,
 					'amount' => $receipt->amount,
 					'charge' => $receipt->charge,
@@ -122,7 +129,7 @@ class Controller extends CI_Controller {
 
 				$editData[] = [
 					'id' => $receipt->id,
-					'date' => "STR_TO_DATE('".$receipt->date."', '%d/%m/%Y')",
+					'date' => $receipt->date,
 					'serial' => $receipt->serial,
 					'amount' => $receipt->amount,
 					'charge' => $receipt->charge,

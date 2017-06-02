@@ -48,8 +48,10 @@
         <td>
             <a href="#" class="glyphicon" ng-class="{'approved glyphicon-ok': editedReceipts[receipt.id].approved == '1', 'notApproved glyphicon-remove': editedReceipts[receipt.id].approved == '0'}" ng-click="reEditReceiptState(receipt)"></a>
         </td>
-        <td><span class="glyphicon glyphicon-edit" ng-click="reEditReceipt(receipt.id)"></span></td>
-        <td ng-if-end><span class="glyphicon glyphicon-repeat" ng-click="resetReceipt(receipt.id)"></span></td>
+        <td ng-if-end>
+            <span class="glyphicon glyphicon-edit" ng-click="reEditReceipt(receipt.id)"></span>
+            <span class="glyphicon glyphicon-repeat" ng-click="resetReceipt(receipt.id)"></span>
+        </td>
     </tr>
     <tr class="newProduct" ng-repeat="receipt in newReceipts | orderBy: 'date'">
         <td>{{ receipt.date }}</td>
@@ -60,8 +62,10 @@
         <td>
             <a href="#" class="glyphicon" ng-class="{'approved glyphicon-ok': receipt.approved == '1', 'notApproved glyphicon-remove': receipt.approved == '0'}" ng-click="changeNewReceiptState(receipt)"></a>
         </td>
-        <td><span class="glyphicon glyphicon-edit" ng-click="editNewReceipt($index)"></span></td>
-        <td><span class="glyphicon glyphicon-remove" ng-click="removeNewReceipt($index)"></span></td>
+        <td>
+            <span class="glyphicon glyphicon-edit" ng-click="editNewReceipt($index)"></span>
+            <span class="glyphicon glyphicon-remove" ng-click="removeNewReceipt($index)"></span>
+        </td>
     </tr>
     </tbody>
 </table>
@@ -69,6 +73,7 @@
 <table class="table table-bordered table-hover table-condensed table-responsive" style="text-align: center">
     <thead>
     <tr>
+        <!--TODO add discount & taxes-->
         <th>סה"כ חשבוניות / תעודות</th>
         <th>חיוב</th>
         <th>זיכוי</th>
