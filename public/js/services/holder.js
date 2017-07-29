@@ -5,8 +5,9 @@ dddatner.service("holder", ["$http", holderFunction]);
 function holderFunction() {
 
     var activeVendorId = null;
-    var selectedMonth = null;
+    var today = null;
     var locationId = null;
+    var inventoryDate = null;
 
     return {
         setLocationId: function(id){
@@ -21,11 +22,17 @@ function holderFunction() {
         setActiveVendorId: function (id) {
             activeVendorId = id;
         },
-        getSelectedMonth: function () {
-            return selectedMonth;
+        getToday: function () {
+            return today;
         },
-        setSelectedMonth: function (month){
-            selectedMonth = angular.copy(month);
+        setToday: function (month){
+            today = angular.copy(month);
+        },
+        getInventoryDate: function () {
+            return inventoryDate;
+        },
+        setInventoryDate: function (date){
+            inventoryDate = angular.copy(date);
         }
     };
 }

@@ -1,0 +1,37 @@
+<form novalidate>
+    <h1>ספירות קודמות</h1>
+    <ul class="table">
+        <li ng-repeat="(year,months) in records | orderObjectBy:year:true" class="year">
+            <h2>{{ years[year] }}</h2>
+            <div ng-repeat="(key, month) in months" class="month">
+                <h3>{{ key | monthName }}</h3>
+                <table class="table table-bordered table-hover table-condensed table-responsive row">
+                    <thead>
+                    <tr>
+                        <th>ספק</th>
+                        <th>סה"כ</th>
+                        <th>סגור</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="vendor in month | orderObjectBy: 'vendorName'">
+                        <td>{{ vendor.vendorName }}</td>
+                        <td>{{ vendor.total | number:2 }}</td>
+                        <td>
+                            <span class="glyphicon" ng-class="{'approved glyphicon-ok': vendor.close == '1', 'notApproved glyphicon-remove': vendor.close == '0'}"></span>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                <div class="w3-panel w3open row">
+                    <h3 class="col-md-6 col-sm-12 col-md-push-6">
+                        <span>סה"כ שווי ספירות </span>
+                        <span>
+                            {{ getTotal(key, years[year]) | number:2}} ש"ח
+                        </span>
+                    </h3>
+                </div>
+            </div>
+        </li>
+    </ul>
+</form>

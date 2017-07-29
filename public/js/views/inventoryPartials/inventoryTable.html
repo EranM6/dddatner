@@ -1,0 +1,80 @@
+<div class="col-md-12 col-sm-12 row" style="height: 100%; overflow-y: auto; padding: 15px;" ng-show="displayTable">
+    <div class="col-md-12 col-sm-12">
+
+        <div class="loader" ng-show="!loading">
+            <div></div>
+        </div>
+        <div ng-cloak>
+            <md-content class="md-padding">
+                <md-nav-bar
+                        md-selected-nav-item="currentNavItem"
+                        nav-bar-aria-label="navigation links">
+                    <md-nav-item ng-repeat="vendor in vendors | orderObjectBy: 'name'"
+                                 ng-click="getVendorInventory(vendor.id)" md-nav-click="goto('page2')"
+                                 name="{{ vendor.name }}">
+                        {{ vendor.name }}
+                    </md-nav-item>
+
+                </md-nav-bar>
+                <div class="ext-content">
+                    <form name="inventoryForm" novalidate>
+                        <table class="table table-bordered table-hover table-condensed table-responsive" ng-show="selectedVendorId">
+                            <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>מוצר</th>
+                                <th>מחיר</th>
+                                <th>קילו / יחידה</th>
+                                <th>כמות</th>
+                                <th>סכום</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr ng-repeat="product in inventoryObj[selectedVendorId] | orderObjectBy:'name'">
+                                <td>{{ $index +1 }}</td>
+                                <td>{{ product.name }}</td>
+                                <td>{{ product.price }}</td>
+                                <td>{{ product.measurement == '1' ? 'לקילו' : 'ליחידה' }}</td>
+                                <td>
+                                    <input name="amount{{ product.id }}" class="inputField" type="text"
+                                           ng-model="inventoryObj[selectedVendorId][product.id].amount"
+                                           pattern="(^\d+(?:\.\d{1,3})?$)" style="max-width: 65%;"
+                                           ng-change="changeWorth(product.id, this.product.amount)"
+                                           ng-blur="cleanValue(product.id, this.product.amount)"
+                                           ng-disabled="closedRecords[selectedVendorId]"
+                                           ng-class="{closedField: closedRecords[selectedVendorId]}"/>
+                                    <span class="error" ng-show="inventoryForm['amount'+this.product.id].$error.pattern">כמות</span>
+                                </td>
+                                <td>
+                                            <span >
+                                            {{ product.worth = product.amount * product.price | number:2 }} ש"ח
+                                            </span>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+
+                        <div class="w3-panel row" ng-class="{w3open: !closedRecords[selectedVendorId], w3close: closedRecords[selectedVendorId]}" ng-show="selectedVendorId">
+                            <h3 class="col-md-6 col-sm-12 col-md-push-6">
+                                <span>סה"כ שווי מוצרים </span>
+                                <span>
+                                        {{ amountPerVendor[selectedVendorId] | number:2}} ש"ח
+                                    </span>
+                            </h3>
+                            <div class="col-md-6 col-sm-12 col-md-pull-5">
+                                <div ng-hide="closedRecords[selectedVendorId]">
+                                    <div ng-hide="inventoryForm.$invalid">
+                                        <button class="btn btn-info" ng-click="saveRecord(selectedVendorId, false)">שמור ספירות של {{ vendors[selectedVendorId].name }}</button>
+                                        <button class="btn btn-primary" ng-click="saveRecord(selectedVendorId, true)">שמור וסגור ספירות של {{ vendors[selectedVendorId].name }}</button>
+                                    </div>
+                                    <h2 ng-show="inventoryForm.$invalid">לא ניתן לבצע סגירה. נא לתקן את השגיאות</h2>
+                                </div>
+                            </div>
+                            <p ng-show="closedRecords[selectedVendorId]">הספירות של {{ vendors[selectedVendorId].name }}  סגורות</p>
+                        </div>
+                    </form>
+                </div>
+            </md-content>
+        </div>
+    </div>
+</div>

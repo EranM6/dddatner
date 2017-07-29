@@ -39,6 +39,19 @@ dddatner.filter('orderObjectBy', function() {
     };
 });
 
+dddatner.filter('sumOfValue', function () {
+    return function (data, key) {
+        console.log(angular.isUndefined(data) || angular.isUndefined(key));
+        if (angular.isUndefined(data) || angular.isUndefined(key))
+            return 0;
+        var sum = 0;
+        angular.forEach(data, function (value) {
+            sum = sum + parseInt(value[key], 10);
+        });
+        return sum;
+    };
+});
+
 
 dddatner.config(["$locationProvider", "$stateProvider", "$urlRouterProvider", routeConfiguration]);
 
@@ -98,7 +111,7 @@ function routeConfiguration($locationProvider, $stateProvider, $urlRouterProvide
                         resolve: {
                             receipts: ['holder','dbModel', function (holder,dbModel) {
                                 var id = holder.getActiveVendorId();
-                                var selectedMonth = holder.getSelectedMonth();
+                                var selectedMonth = holder.getToday();
                                 return dbModel.getReceiptsByVendor(id, selectedMonth);
                             }]
                         },
@@ -119,6 +132,9 @@ function routeConfiguration($locationProvider, $stateProvider, $urlRouterProvide
                     resolve: {
                         vendors: ['$state', 'dbModel', function ($state, dbModel) {
                             return dbModel.getVendors();
+                        }],
+                        entries: ['$state', 'dbModel', function ($state, dbModel) {
+                            return dbModel.getEntries();
                         }]
                     },
                     controller: "inventoryCtrl",
@@ -130,6 +146,20 @@ function routeConfiguration($locationProvider, $stateProvider, $urlRouterProvide
                     url: "/dddatner/",
                     templateUrl: "./public/js/views/inventory.html"
                 })
+                    .state('home.inventory.table', {
+                        resolve: {
+                            vendors: ['$state', 'dbModel', function ($state, dbModel) {
+                                return dbModel.getVendors();
+                            }]
+                        },
+                        controller: "inventoryCtrl",
+                        params: {
+                            date: {
+                                value: null
+                            }
+                        },
+                        template: "<inventory-table-directive></inventory-table-directive>"
+                    })
                 .state('home.productTree', {
                     resolve: {
                         data: ['$state', 'dbModel', function ($state, dbModel) {

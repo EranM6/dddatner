@@ -3,13 +3,13 @@
 
 class Place {
 
-	static function getPlaces($name = null){
+	static function getPlaces($name = null) {
 		$conn = validConnection();
 		$conn->load->database();
 
-		if(!isset($name)){
+		if (!isset($name)) {
 			$sql = "SELECT * FROM places";
-		}else{
+		} else {
 			$sql = "SELECT * FROM places WHERE eng_name = '{$name}'";
 		}
 
@@ -88,9 +88,9 @@ class Place {
 		$conn = validConnection();
 		$conn->load->database();
 
-		$conn->insert('vendors', $data);
+		$conn->db->insert('vendors', $data);
 
-		return ['newId' => $conn->insert_id()];
+		return ['newId' => $conn->db->insert_id()];
 	}
 
 	static function updateVendor($id, $data) {
@@ -98,7 +98,7 @@ class Place {
 		$conn->load->database();
 
 		$where = "id = {$id}";
-		$query = $conn->update('vendors', $data, $where);
+		$query = $conn->db->update('vendors', $data, $where);
 
 		return $query;
 	}
@@ -136,9 +136,9 @@ class Place {
 		if ($data['newData']) {
 			$count = count($data['newData']);
 
-			$conn->insert_batch('products', $data['newData']);
+			$conn->db->insert_batch('products', $data['newData']);
 
-			$first_id = $conn->insert_id();
+			$first_id = $conn->db->insert_id();
 
 			$last_id = $first_id + ($count - 1);
 
@@ -146,7 +146,7 @@ class Place {
 		}
 		if ($data['editData']) {
 
-			$conn->update_batch('products', $data['editData'], 'id');
+			$conn->db->update_batch('products', $data['editData'], 'id');
 
 
 			$result['edit'] = 'ok';
@@ -175,6 +175,8 @@ AND (
 AND
 	MONTH(`date`) = {$conn->db->escape($month)}
 	)
+AND
+	`dead` = false
 ORDER BY 
 	`date`;
 SQL;
@@ -192,7 +194,8 @@ SQL;
 					'amount' => $row->amount,
 					'charge' => $row->charge,
 					'approved' => $row->approved,
-					'vendorId' => $row->vendorId
+					'vendorId' => $row->vendorId,
+					'comment' => $row->comment
 				];
 			}
 			$results['receipts'] = $receipts;
@@ -202,7 +205,7 @@ SQL;
 			$details = self::getVendorReceiptsDetails($conn, $placeId, $id, $month, $year);
 
 			$results['charge'] = $details['charge'];
-			$results['refund'] = $details['refund'];
+			$results['total'] = $details['total'];
 			$results['notApproved'] = $details['notApproved'];
 		}
 
@@ -214,58 +217,72 @@ SQL;
 		$sql =
 			<<<SQL
 SELECT
-  SUM(amount) as details
+  charge.charge,
+  charge.notApproved,
+  SUM(amount) AS total
 FROM
   receipts
+  JOIN (
+         SELECT
+           notApproved.placeId,
+           notApproved.notApproved,
+           SUM(amount) AS charge
+         FROM
+           receipts
+           JOIN (
+                  SELECT
+                    placeId,
+                    COUNT(approved) notApproved
+                  FROM receipts
+                  WHERE
+                    approved = '0'
+                    AND
+                    vendorId = {$id}
+                    AND
+                    placeId = {$placeId}
+                    AND (
+                      YEAR(`date`) = {$year}
+                      AND
+                      MONTH(`date`) = {$month}
+                    )
+                    AND
+                    dead = false
+                ) AS notApproved
+             ON {$placeId} = receipts.placeId
+         WHERE
+           vendorId = {$id}
+           AND
+           receipts.placeId = {$placeId}
+           AND (
+             YEAR(`date`) = {$year}
+             AND
+             MONTH(`date`) = {$month}
+           )
+           AND
+           charge = '1'
+           AND
+		  dead = false
+       ) AS charge
+    ON {$placeId} = receipts.placeId
 WHERE
   vendorId = {$id}
-AND
-	placeId = {$placeId}
+  AND
+  receipts.placeId = {$placeId}
   AND (
     YEAR(`date`) = {$year}
     AND
     MONTH(`date`) = {$month}
   )
   AND
-  charge = '0'
-UNION
-SELECT
-  SUM(amount)
-FROM
-  receipts
-WHERE
-  vendorId = {$id}
-AND
-	placeId = {$placeId}
-  AND (
-    YEAR(`date`) = {$year}
-    AND
-    MONTH(`date`) = {$month}
-  )
-  AND
-  charge = '1'
-UNION
-SELECT COUNT(approved)
-FROM receipts
-WHERE
-  approved = '0'
-AND
-  vendorId = {$id}
-AND
-	placeId = {$placeId}
-AND (
-    YEAR(`date`) = {$year}
-  AND
-    MONTH(`date`) = {$month}
-      );
+	receipts.dead = false;
 SQL;
 		$query = $conn->db->query($sql);
-
+		$result = $query->result()[0];
 		$details = [];
 		if ($query->result()) {
-			$details['refund'] = $query->result()[0]->details;
-			$details['charge'] = $query->result()[1]->details;
-			$details['notApproved'] = $query->result()[2]->details;
+			$details['total'] = $result->total;
+			$details['charge'] = $result->charge;
+			$details['notApproved'] = $result->notApproved;
 		}
 
 		return $details;
@@ -281,31 +298,32 @@ SQL;
 			$count = count($data['newData']);
 
 			$values = "";
-			foreach ($data['newData'] as $value) :
-				$value =
+			foreach ($data['newData'] as $row) :
+				$row =
 					<<<VAL
-(STR_TO_DATE('{$value['date']}', '%d/%m/%Y'), 
-'{$value['vendorId']}', 
-'{$value['serial']}', 
-'{$value['amount']}', 
-'{$value['charge']}', 
-'{$value['approved']}',
+(STR_TO_DATE('{$row['date']}', '%d/%m/%Y'), 
+'{$row['vendorId']}', 
+'{$row['serial']}', 
+'{$row['amount']}', 
+'{$row['charge']}', 
+'{$row['approved']}',
+"{$row['comment']}",
 '{$placeId}'),
 VAL;
 
-				$values .= $value;
+				$values .= $row;
 			endforeach;
 			$values = rtrim($values, ', ');
 
 			$sql =
 				<<<SQL
 INSERT INTO
- 	receipts(date, vendorId, serial, amount, charge, approved, placeId)
+ 	receipts(date, vendorId, serial, amount, charge, approved, comment, placeId)
 VALUES {$values};
 SQL;
-			$conn->query($sql);
+			$conn->db->query($sql);
 
-			$first_id = $conn->insert_id();
+			$first_id = $conn->db->insert_id();
 
 			$last_id = $first_id + ($count - 1);
 
@@ -313,33 +331,49 @@ SQL;
 		}
 		if ($data['editData']) {
 
-			$values = "";
+			$values = ['date', 'vendorId', 'serial', 'amount', 'charge', 'approved', 'comment'];
+			$sqlString = "UPDATE receipts SET";
+			foreach ($values as $value) :
+				$sqlString .= " {$value} = CASE";
+				foreach ($data['editData'] as $row) :
+					if ($value == 'date')
+						$sqlString .= " WHEN id = '{$row['id']}' THEN STR_TO_DATE('{$row[$value]}', '%d/%m/%Y')";
+					else
+						$sqlString .= " WHEN id = '{$row['id']}' THEN ".$conn->db->escape($row[$value]);
 
-			foreach ($data['editData'] as $value) :
-
-				$sql =
-					<<<VAL
-UPDATE receipts
-SET 
- 	date = STR_TO_DATE('{$value['date']}', '%d/%m/%Y'), 
- 	vendorId = '{$value['vendorId']}', 
- 	serial = '{$value['serial']}', 
- 	amount = '{$value['amount']}', 
- 	charge = '{$value['charge']}', 
- 	approved = '{$value['approved']}',
- 	placeId = '{$placeId}'
-WHERE id = '{$value['id']}';
-VAL;
-
-				$values .= $sql;
-
+				endforeach;
+				$sqlString .= " ELSE {$value} END,";
 			endforeach;
+			$sqlString = rtrim($sqlString, ', ');
+			$ids = [];
+			foreach ($data['editData'] as $entry) :
+				$ids[] = "'{$entry['id']}'";
+			endforeach;
+			$ids = implode(",", $ids);
+			$sqlString .= " WHERE id in ({$ids});";
 
-
-			$conn->query($values);
+			$conn->db->query($sqlString);
 
 			$result['edit'] = 'ok';
 		}
+
+		$result['isApproved'] = self::getUnApproved($data["vendorId"], $data["year"], $data["month"]);
+
+		return $result;
+	}
+
+	static function removeReceipt($id) {
+		$conn = validConnection();
+		$conn->load->database();
+
+		$sql = "UPDATE receipts SET dead = TRUE WHERE id={$id};";
+		return $conn->db->query($sql);
+	}
+
+	static function getUnApproved($vendorId, $year, $month) {
+		$conn = validConnection();
+		$conn->load->database();
+		$placeId = getLocation();
 
 		$sql =
 			<<<VAL
@@ -348,19 +382,19 @@ FROM receipts
 WHERE
   approved = '0'
 AND
-  vendorId = {$data["vendorId"]}
+  vendorId = {$vendorId}
+AND
+	placeId = {$placeId}
 AND (
-    YEAR(`date`) = {$data["year"]}
+    YEAR(`date`) = {$year}
   AND
-    MONTH(`date`) = {$data["month"]}
+    MONTH(`date`) = {$month}
       );
 VAL;
 
-		$query = $conn->conn_id->prepare($sql);
-		$count = $query->execute();
-		$count = $query->fetchAll(PDO::FETCH_ASSOC);
-		$result['notApproved'] = $count[0]["counts"];
-		return $result;
+		$count = $conn->db->query($sql);
+		return $count->result()[0]->counts > 0 ? false : true;
+
 	}
 
 	static function closeMonth($month, $year, $vendorId, $charge, $refund) {
@@ -374,7 +408,7 @@ INSERT INTO
  	history(month, year, vendorId, charge, refund, placeId)
 VALUES ({$month}, {$year}, {$vendorId}, {$charge}, {$refund}, {$placeId});
 SQL;
-		$conn->query($sql);
+		$conn->db->query($sql);
 
 		return ['closed' => 'ok'];
 	}
@@ -442,6 +476,167 @@ SQL;
 				];
 			}
 			$results['records'] = $closedMonths;
+		}
+
+		return $results;
+	}
+
+	static function getVendorInventory($id, $month, $year) {
+		$conn = validConnection();
+		$conn->load->database();
+		$placeId = getLocation();
+
+		$sql = <<<SQL
+SELECT
+  id,
+  name,
+  price,
+  weight,
+  vendorId,
+  entryId,
+  itemEntryId,
+  amount,
+  total AS totalAmount,
+  close
+FROM products
+  LEFT JOIN (
+              SELECT
+                inventory_entry.id AS entryId,
+                itemId,
+                amount,
+                close,
+                total,
+                inventory_items.id AS itemEntryId
+              FROM inventory_entry
+                JOIN inventory_items ON inventory_entry.id = entryId
+              WHERE month = {$month} AND year = {$year} AND placeId = {$placeId}
+            ) AS entries
+    ON entries.itemId = products.id
+WHERE vendorId = {$id};
+SQL;
+		$query = $conn->db->query($sql);
+
+		$results = null;
+		if ($query->result()) {
+
+			foreach ($query->result() as $row) {
+				$results["products"][$row->id] = [
+					'id' => $row->id,
+					'name' => $row->name,
+					'price' => $row->price,
+					'measurement' => $row->weight,
+					'vendorId' => $row->vendorId,
+					'entryId' => $row->entryId,
+					'itemEntryId' => $row->itemEntryId,
+					'amount' => isset($row->amount) ? $row->amount : 0
+				];
+			}
+			$results['close'] = $query->result()[0]->close;
+			$results['totalAmount'] = $query->result()[0]->totalAmount;
+		}
+		return $results;
+	}
+
+	static function saveRecords($entry, $items) {
+		$conn = validConnection();
+		$conn->load->database();
+		$placeId = getLocation();
+
+		$sql = <<<SQL
+SELECT id
+FROM inventory_entry
+WHERE vendorId = {$entry["vendorId"]} AND month = {$entry["month"]} AND year = {$entry["year"]};
+SQL;
+
+		$query = $conn->db->query($sql);
+
+		if ($query->result())
+			$entryId = $query->result()[0] -> id;
+
+		if (isset($entryId)){
+			$sql = <<<SQL
+UPDATE inventory_entry
+SET total = {$entry["total"]}, close = {$entry["close"]}
+WHERE id = {$entryId};
+SQL;
+
+			$query = $conn->db->query($sql);
+
+			if ($query){
+				$values = ['amount'];
+				$sqlString = "UPDATE inventory_items SET";
+				foreach ($values as $value) :
+					$sqlString .= " {$value} = CASE";
+					foreach ($items as $row) :
+						$sqlString .= " WHEN id = '{$row -> itemEntryId}' THEN '{$row -> $value}'";
+					endforeach;
+					$sqlString .= " ELSE {$value} END,";
+				endforeach;
+				$sqlString = rtrim($sqlString, ', ');
+				$ids = [];
+				foreach ($items as $entry) :
+					$ids[] = "'{$entry -> itemEntryId}'";
+				endforeach;
+				$ids = implode(",", $ids);
+				$sqlString .= " WHERE id in ({$ids});";
+
+				return ['saved' => $conn->db->query($sqlString), 'closed' => $entry["close"]];
+			}
+		}else {
+
+			$sql = <<<SQL
+INSERT INTO inventory_entry (vendorId, month, year, placeId, close, total) VALUES
+({$entry["vendorId"]}, {$entry["month"]}, {$entry["year"]}, {$placeId}, {$entry["close"]}, {$entry["total"]})
+SQL;
+
+			$conn->db->query($sql);
+			$entryId = $conn->db->insert_id();
+
+			if (isset($entryId)) {
+				$sql = "INSERT INTO inventory_items (itemId, amount, price, entryId) VALUES ";
+				foreach ($items as $item) :
+					$amount = !isset($item->amount) ? 0 : $item->amount;
+					$sql .= "({$item->id}, {$amount}, {$item->price}, {$entryId}),";
+				endforeach;
+				$sql = rtrim($sql, ', ');
+				return ['saved' => $conn->db->query($sql), 'closed' => $entry["close"]];
+			}
+		}
+		return null;
+	}
+
+	static function getEntries() {
+		$conn = validConnection();
+		$conn->load->database();
+		$placeId = getLocation();
+
+		$sql = <<<SQL
+SELECT inventory_entry.id AS id, month, year, total, close, company_name AS vendorName
+FROM
+  inventory_entry
+  JOIN vendors
+  ON vendorId = vendors.id
+WHERE
+	placeId = {$placeId}
+ORDER BY year DESC, month;
+SQL;
+
+		$query = $conn->db->query($sql);
+
+		$results = null;
+		if ($query->result()) {
+			$entries = null;
+			foreach ($query->result() as $row) {
+				$entries[$row->year][$row->month][$row->vendorName] = [
+					'id' => $row->id,
+					'vendorName' => $row->vendorName,
+					'month' => $row->month,
+					'year' => $row->year,
+					'total' => $row->total,
+					'close' => $row->close
+				];
+			}
+			$results['records'] = $entries;
 		}
 
 		return $results;

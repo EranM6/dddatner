@@ -1,0 +1,51 @@
+<div id="inventoryModal" class="modal fade" data-backdrop="static" data-keyboard="false" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">{{ name }} - הוספת ספק חדש</h4>
+            </div>
+            <div class="modal-body clearfix">
+                <form name="newInventoryForm" novalidate>
+                    <div class="row">
+                        <p class="col-md-6 col-sm-6">
+                            <label for="month">בחר/י חודש</label>
+                            <span>:</span>
+                            <select name="month" id="month" class="selectField" ng-model="inventoryDate.month"
+                                    required>
+                                <option value=1>ינואר</option>
+                                <option value=2>פברואר</option>
+                                <option value=3>מרץ</option>
+                                <option value=4>אפריל</option>
+                                <option value=5>מאי</option>
+                                <option value=6>יוני</option>
+                                <option value=7>יולי</option>
+                                <option value=8>אוגוסט</option>
+                                <option value=9>ספטמבר</option>
+                                <option value=10>אוקטובר</option>
+                                <option value=11>נובמבר</option>
+                                <option value=12>דצמבר</option>
+                            </select>
+                        </p>
+                        <div class="col-md-6 col-sm-6">
+                            <label for="year">הכנס/י שנה</label>
+                            <span>:</span>
+                            <input name="year" id="year" class="inputField" type="text"
+                                   ng-model="inventoryDate.year" pattern="\d{4}" required/>
+                            <p class="error" ng-show="newInventoryForm.year.$error.pattern">שנה לא תקינה</p>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <div class="btn-group" style="direction: ltr;">
+                    <button class="btn btn-success" ng-click="saveNewInventory()"
+                            ng-disabled="newInventoryForm.$invalid">
+                        <span>שמור</span>
+                    </button>
+                    <button class="btn btn-danger" ng-click="cancelNewInventory()"><span>ביטול</span></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

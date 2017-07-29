@@ -9,6 +9,7 @@ function vendorCtrl($scope, $stateParams, $timeout, dbModel, holder, vendors) {
     $scope.vendors = {};
 
     var reset = function () {
+        $scope.activeVendorId = null;
         $scope.vendorNewInfo = null;
         $scope.newVendorInfo = null;
         $scope.editMode = false;

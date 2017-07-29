@@ -2,7 +2,7 @@ dddatner.controller("receiptsCtrl", ["$scope", "$timeout", "dbModel", "holder", 
 
 function receiptsCtrl($scope, $timeout, dbModel, holder, receipts) {
 
-    $scope.selectedMonth = holder.getSelectedMonth();
+    $scope.selectedMonth = holder.getToday();
     $scope.newReceipts = [];
     $scope.editedReceipts = {};
     $scope.addReceipt = false;
@@ -39,7 +39,7 @@ function receiptsCtrl($scope, $timeout, dbModel, holder, receipts) {
                 month: month,
                 year: year
             };
-            holder.setSelectedMonth($scope.selectedMonth);
+
             var id = $scope.activeVendorId;
             dbModel.getReceiptsByVendor(id, $scope.selectedMonth)
                 .then(function (data) {
@@ -50,9 +50,15 @@ function receiptsCtrl($scope, $timeout, dbModel, holder, receipts) {
                             $scope.countOfReceipts = 0;
                         }
 
-                    $scope.chargedReceipts = data.data.charge ? Number(data.data.charge) : 0;
+                        $scope.chargedReceipts = 0;
+                        $scope.refundedReceipts = 0;
 
-                    $scope.refundedReceipts = data.data.refund ? Number(data.data.refund) : 0;
+                        if (data.data.charge) {
+                            $scope.chargedReceipts = Number(data.data.charge);
+                            if (data.data.total) {
+                                $scope.refundedReceipts = Number(data.data.total) - Number(data.data.charge);
+                            }
+                        }
 
                         $scope.canClose = Number(data.data.notApproved) === 0;
                         $scope.closedMonth = !!data.data.closed;
@@ -109,6 +115,25 @@ function receiptsCtrl($scope, $timeout, dbModel, holder, receipts) {
         delete $scope.editedReceipts[id];
     };
 
+    $scope.removeReceipt = function (id){
+        if (confirm("are you sure you want to delete "+$scope.vendorReceipts[id].serial+" ?")) {
+            dbModel.removeReceipt(id)
+                .then(function(){
+                    "use strict";
+                    if (($scope.vendorReceipts[id].charge) === '1') {
+                        $scope.chargedReceipts -= Number($scope.vendorReceipts[id].amount);
+                    } else {
+                        $scope.refundedReceipts -= Number($scope.vendorReceipts[id].amount);
+                    }
+                    delete $scope.vendorReceipts[id];
+                    $scope.countOfReceipts--;
+                })
+                .catch(function (err) {
+                    console.log(err);
+                });
+        }
+    };
+
     $scope.removeNewReceipt = function (index){
         if (($scope.newReceipts[index].charge) === '1') {
             $scope.chargedReceipts -= Number($scope.newReceipts[index].amount);
@@ -116,7 +141,7 @@ function receiptsCtrl($scope, $timeout, dbModel, holder, receipts) {
             $scope.refundedReceipts -= Number($scope.newReceipts[index].amount);
         }
         $scope.newReceipts.splice(index, 1);
-        $scope.countOfReceipts --;
+        $scope.countOfReceipts--;
     };
 
     $scope.changeReceiptState = function(id){
@@ -163,6 +188,7 @@ function receiptsCtrl($scope, $timeout, dbModel, holder, receipts) {
             serial: $scope.newReceipt.serial,
             amount: $scope.newReceipt.amount,
             charge: $scope.newReceipt.charge,
+            comment: $scope.newReceipt.comment,
             approved: '0',
             vendorId: $scope.activeVendorId
         });
@@ -202,7 +228,7 @@ function receiptsCtrl($scope, $timeout, dbModel, holder, receipts) {
                     $scope.addReceipt = false;
                     $scope.changeReceipt = false;
 
-                    $scope.canClose = Number(data.data.notApproved) === 0;
+                    $scope.canClose = data.data.isApproved;
                 }
             )
             .catch(function (err) {

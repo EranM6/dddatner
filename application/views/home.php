@@ -24,7 +24,7 @@ header("Pragma: no-cache");
 	</style>
 </head>
 <body ng-app="dddatner" ng-cloak style="direction: rtl; background-color: white;">
-<div ui-view></div>
+<div ui-view style="background-color: white;"></div>
 
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular-route.min.js"></script>

@@ -29,7 +29,7 @@ function homeCtrl($scope, $state, location, dbModel, holder, $timeout, $interval
     };
 
     $scope.initDate = function(){
-        holder.setSelectedMonth({month: $scope.today.getMonth() +1 , year: $scope.today.getFullYear()});
+        holder.setToday({month: $scope.today.getMonth() +1 , year: $scope.today.getFullYear()});
     };
 
     $scope.initDate();

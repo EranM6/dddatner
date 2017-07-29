@@ -86,7 +86,7 @@ function productsCtrl($scope, $state, $timeout, dbModel, products) {
                         }
                     }
                     $scope.newProducts = [];
-                    $scope.editedProducts = [];
+                    $scope.editedProducts = {};
                     $scope.addProduct = false;
                     $scope.changeProduct = false;
                 }
