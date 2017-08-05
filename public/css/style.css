@@ -47,13 +47,10 @@ md-pagination-wrapper {
     width: 100%;
 }
 
-#inventoryModal .selectField {
-    direction: rtl;
-    border: none;
-    text-align: right;
-    border-bottom: 1px solid #5cb85c;
-    background: none;
-    width: 30%;
+#inventoryModal .modal-content {
+    display: block;
+    margin: 0 auto;
+    width: 315px;
 }
 
 .selectField::-webkit-scrollbar-track {
@@ -341,3 +338,17 @@ th {
     line-height: 33px;
 }
 
+.full button span {
+    background-color: limegreen;
+    border-radius: 32px;
+    color: black;
+}
+.partially button span {
+    background-color: orange;
+    border-radius: 32px;
+    color: black;
+}
+
+[uib-datepicker-popup-wrap], [uib-datepicker] {
+    direction: ltr !important;
+}

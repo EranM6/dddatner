@@ -7,11 +7,12 @@
         <div class="row" style="font-size: 16px;">
             <div class="col-md-3 col-sm-12 col-md-push-9">
                 <h4>
-                    <span>תאריך</span>
-                    <span>:</span>
-                    <input class="inputField" name="day" type="text" ng-model="receiptNewInfo.date" pattern="(^(((0[1-9]|1[0-9]|2[0-8])[\/](0[1-9]|1[012]))|((29|30|31)[\/](0[13578]|1[02]))|((29|30)[\/](0[4,6,9]|11)))[\/](19|[2-9][0-9])\d\d$)|(^29[\/]02[\/](19|[2-9][0-9])(00|04|08|12|16|20|24|28|32|36|40|44|48|52|56|60|64|68|72|76|80|84|88|92|96)$)" required/>
-                    <p class="error" ng-show="editReceiptForm.day.$error.pattern">format dd/mm/yyyy</p>
-                    <p class="error" ng-show="editReceiptForm.day.$error.required">הכנס תאריך</p>
+                    <p class="input-group">
+                        <span>תאריך</span>
+                        <span>:</span>
+                        <span ng-click="open()" class="glyphicon glyphicon-calendar" style="margin: 0 5px"></span>
+                        <input type="text" name="day" class="inputField" ng-model="receiptNewInfo.date" focus-me="cleanForm" uib-datepicker-popup="{{format}}" is-open="popup.opened" datepicker-options="dateOptions" popup-placement="auto top-right" ng-required="true" close-text="Close" alt-input-formats="altInputFormats" readonly/>
+                    </p>
                 </h4>
             </div>
             <div class="col-md-4 col-sm-12 col-md-push-2">
