@@ -8,7 +8,7 @@ function inventoryCtrl($scope, $stateParams, $state, dbModel, holder, vendors, e
     $scope.loading = true;
     $scope.inventoryObj = {};
     $scope.month = holder.getToday();
-    $scope.inventoryDate = holder.getInventoryDate() || {};
+    $scope.inventoryDate = holder.getInventoryDate() || new Date();
     $scope.selectedVendorId = null;
     $scope.amountPerVendor = {};
     $scope.closedRecords = {};
@@ -18,14 +18,12 @@ function inventoryCtrl($scope, $stateParams, $state, dbModel, holder, vendors, e
     $scope.records = entries.data.records ? entries.data.records : {};
     $scope.years = Object.keys($scope.records).reverse();
     $scope.vendors = vendors.data.vendors;
-    $scope.showModal = function () {
 
-        $scope.inventoryDate = {"month": String($scope.month.month), "year": String($scope.month.year)};
+    $scope.showModal = function () {
         jQuery("#inventoryModal").modal('show');
     };
 
     $scope.cancelNewInventory = function(){
-        $scope.inventoryDate = {};
         jQuery("#inventoryModal").modal('hide');
     };
 
@@ -42,7 +40,7 @@ function inventoryCtrl($scope, $stateParams, $state, dbModel, holder, vendors, e
            $scope.amountPerVendor[id] = 0;
         $scope.selectedVendorId = id;
         if (!$scope.inventoryObj || !$scope.inventoryObj[id])
-            dbModel.getVendorInventory(id, $scope.inventoryDate.month, $scope.inventoryDate.year)
+            dbModel.getVendorInventory(id, $scope.inventoryDate.getMonth() + 1, $scope.inventoryDate.getFullYear())
                 .then(function(data){
                     console.log("retrieving", data.data);
                     $scope.inventoryObj[id] = data.data.products;
@@ -84,8 +82,8 @@ function inventoryCtrl($scope, $stateParams, $state, dbModel, holder, vendors, e
     $scope.saveRecord = function (vendorId, close) {
 
         var newInventory = {
-            month: $scope.inventoryDate.month,
-            year: $scope.inventoryDate.year,
+            month: $scope.inventoryDate.getMonth() + 1,
+            year: $scope.inventoryDate.getFullYear(),
             vendorId: vendorId,
             totalAmount: $scope.amountPerVendor[vendorId],
             productsList: $scope.inventoryObj[vendorId],
@@ -123,4 +121,70 @@ function inventoryCtrl($scope, $stateParams, $state, dbModel, holder, vendors, e
             });
         return true;
     };
+
+    $scope.today = function() {
+        $scope.dt = new Date();
+    };
+    $scope.today();
+
+    $scope.clear = function() {
+        $scope.dt = null;
+    };
+
+    $scope.options = {
+        customClass: getDayClass,
+        minDate: new Date(),
+        showWeeks: true,
+        minMode: 'month'
+    };
+
+    // Disable weekend selection
+    function disabled(data) {
+        var date = data.date,
+            mode = data.mode;
+        return mode === 'day' && (date.getDay() === 0 || date.getDay() === 6);
+    }
+
+    $scope.toggleMin = function() {
+        $scope.options.minDate = $scope.options.minDate ? null : new Date();
+    };
+
+    $scope.toggleMin();
+
+    $scope.setDate = function(year, month, day) {
+        $scope.dt = new Date(year, month, day);
+    };
+
+    var tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    var afterTomorrow = new Date(tomorrow);
+    afterTomorrow.setDate(tomorrow.getDate() + 1);
+    $scope.events = [
+        {
+            date: tomorrow,
+            status: 'full'
+        },
+        {
+            date: afterTomorrow,
+            status: 'partially'
+        }
+    ];
+
+    function getDayClass(data) {
+        var date = data.date,
+            mode = data.mode;
+        if (mode === 'day') {
+            var dayToCheck = new Date(date).setHours(0,0,0,0);
+
+            for (var i = 0; i < $scope.events.length; i++) {
+                var currentDay = new Date($scope.events[i].date).setHours(0,0,0,0);
+
+                if (dayToCheck === currentDay) {
+                    return $scope.events[i].status;
+                }
+            }
+        }
+
+        return '';
+    }
 }

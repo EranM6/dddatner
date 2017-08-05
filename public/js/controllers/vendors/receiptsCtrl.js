@@ -83,6 +83,8 @@ function receiptsCtrl($scope, $timeout, dbModel, holder, receipts) {
         $scope.receiptNewInfo = {};
         $scope.receiptEdited = id;
         $scope.receiptNewInfo = angular.copy($scope.vendorReceipts[id]);
+        $scope.receiptNewInfo.date = reFormatDate($scope.receiptNewInfo.date);
+
         jQuery("#receiptModal").modal('show');
     };
 
@@ -90,6 +92,8 @@ function receiptsCtrl($scope, $timeout, dbModel, holder, receipts) {
         $scope.receiptNewInfo = {};
         $scope.newReceiptEdited = index;
         $scope.receiptNewInfo = angular.copy($scope.newReceipts[index]);
+        $scope.receiptNewInfo.date = reFormatDate($scope.receiptNewInfo.date);
+
         jQuery("#receiptModal").modal('show');
     };
 
@@ -97,6 +101,8 @@ function receiptsCtrl($scope, $timeout, dbModel, holder, receipts) {
         $scope.receiptNewInfo = {};
         $scope.receiptReEdited = id;
         $scope.receiptNewInfo = angular.copy($scope.editedReceipts[id]);
+        $scope.receiptNewInfo.date = reFormatDate($scope.receiptNewInfo.date);
+
         jQuery("#receiptModal").modal('show');
     };
 
@@ -184,11 +190,11 @@ function receiptsCtrl($scope, $timeout, dbModel, holder, receipts) {
         if ($scope.newReceipt.date.length === 1)
             $scope.newReceipt.date = "0" + $scope.newReceipt.date;
         $scope.newReceipts.push({
-            date: $scope.newReceipt.date + "/" + $scope.selectedMonth.month + "/" + $scope.selectedMonth.year,
+            date: formatDate($scope.newReceipt.date),
             serial: $scope.newReceipt.serial,
             amount: $scope.newReceipt.amount,
             charge: $scope.newReceipt.charge,
-            comment: $scope.newReceipt.comment,
+            comment: $scope.newReceipt.comment || "",
             approved: '0',
             vendorId: $scope.activeVendorId
         });
@@ -266,6 +272,7 @@ function receiptsCtrl($scope, $timeout, dbModel, holder, receipts) {
 
     $scope.showEditReceipt = function () {
         if($scope.receiptEdited !== null){
+            $scope.receiptNewInfo.date =  formatDate($scope.receiptNewInfo.date);
             if ($scope.validChange($scope.receiptNewInfo, $scope.vendorReceipts[$scope.receiptEdited])) {
                 $scope.editedReceipts[$scope.receiptEdited] = angular.copy($scope.receiptNewInfo);
                 $scope.editedReceipts[$scope.receiptEdited].vendorId = $scope.activeVendorId;
@@ -282,6 +289,7 @@ function receiptsCtrl($scope, $timeout, dbModel, holder, receipts) {
                 }
             }
         }else if ($scope.newReceiptEdited !== null){
+            $scope.receiptNewInfo.date =  formatDate($scope.receiptNewInfo.date);
             if ($scope.validChange($scope.receiptNewInfo, $scope.newReceipts[$scope.newReceiptEdited])) {
                 if ($scope.newReceipts[$scope.newReceiptEdited].charge === '1') {
                     $scope.chargedReceipts -= Number($scope.newReceipts[$scope.newReceiptEdited].amount);
@@ -296,6 +304,7 @@ function receiptsCtrl($scope, $timeout, dbModel, holder, receipts) {
                 $scope.newReceipts[$scope.newReceiptEdited] = angular.copy($scope.receiptNewInfo);
             }
         }else if ($scope.receiptReEdited !== null){
+            $scope.receiptNewInfo.date =  formatDate($scope.receiptNewInfo.date);
             if ($scope.validChange($scope.receiptNewInfo, $scope.editedReceipts[$scope.receiptReEdited])) {
                 if ($scope.editedReceipts[$scope.receiptReEdited].charge === '1') {
                     $scope.chargedReceipts -= Number($scope.editedReceipts[$scope.receiptReEdited].amount);
@@ -354,4 +363,109 @@ function receiptsCtrl($scope, $timeout, dbModel, holder, receipts) {
         $scope.lastPosibleDate = new Date(year, month , 0).getDate();
         return {month: month, year: year};
     };
+
+    var formatDate = function(date) {
+        var d = new Date(date),
+            month = '' + (d.getMonth() + 1),
+            day = '' + d.getDate(),
+            year = d.getFullYear();
+
+        if (month.length < 2) month = '0' + month;
+        if (day.length < 2) day = '0' + day;
+
+        return [day, month, year].join('/');
+    };
+
+    var reFormatDate = function(date) {
+        var parts = date.split('/');
+
+        return new Date(parts[1] + "/" + parts[0] + "/" + parts[2]);
+    };
+
+    $scope.today = function() {
+        $scope.dt = new Date();
+    };
+    $scope.today();
+
+    $scope.clear = function() {
+        $scope.dt = null;
+    };
+
+    $scope.inlineOptions = {
+        customClass: getDayClass,
+        minDate: new Date(),
+        showWeeks: true
+    };
+
+    $scope.dateOptions = {
+        // dateDisabled: disabled,
+        formatYear: 'yy',
+        maxDate: new Date(2020, 5, 22),
+        minDate: new Date(),
+        startingDay: 0
+    };
+
+    /*// Disable weekend selection
+    function disabled(data) {
+        var date = data.date,
+            mode = data.mode;
+        return mode === 'day' && (date.getDay() === 0 || date.getDay() === 6);
+    }*/
+
+    $scope.toggleMin = function() {
+        $scope.inlineOptions.minDate = $scope.inlineOptions.minDate ? null : new Date();
+        $scope.dateOptions.minDate = $scope.inlineOptions.minDate;
+    };
+
+    $scope.toggleMin();
+
+    $scope.open = function() {
+        $scope.popup.opened = true;
+    };
+
+
+    $scope.setDate = function(year, month, day) {
+        $scope.dt = new Date(year, month, day);
+    };
+
+    $scope.formats = ['dd/MM/yyyy'];
+    $scope.format = $scope.formats[0];
+    $scope.altInputFormats = ['M!/d!/yyyy'];
+
+    $scope.popup = {
+        opened: false
+    };
+
+    var tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    var afterTomorrow = new Date();
+    afterTomorrow.setDate(tomorrow.getDate() + 1);
+    $scope.events = [
+        {
+            date: tomorrow,
+            status: 'full'
+        },
+        {
+            date: afterTomorrow,
+            status: 'partially'
+        }
+    ];
+
+    function getDayClass(data) {
+        var date = data.date,
+            mode = data.mode;
+        if (mode === 'day') {
+            var dayToCheck = new Date(date).setHours(0,0,0,0);
+
+            for (var i = 0; i < $scope.events.length; i++) {
+                var currentDay = new Date($scope.events[i].date).setHours(0,0,0,0);
+
+                if (dayToCheck === currentDay) {
+                    return $scope.events[i].status;
+                }
+            }
+        }
+
+        return '';
+    }
 }
