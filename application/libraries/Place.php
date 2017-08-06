@@ -29,7 +29,7 @@ class Place {
 		return $results;
 	}
 
-	static function getVendors($id = null) {
+	static function getVendors($id = null, $file = null) {
 		$conn = validConnection();
 		$conn->load->database();
 		if (!isset($id)) {
@@ -50,35 +50,40 @@ class Place {
 				$results['vendors'] = $vendors;
 			}
 		} else {
+			if (!isset($file)) {
+				$sql = "SELECT * FROM vendors WHERE id = (" . $conn->db->escape($id) . ")";
+				$query = $conn->db->query($sql);
 
-			$sql = "SELECT * FROM vendors WHERE id = (" . $conn->db->escape($id) . ")";
-			$query = $conn->db->query($sql);
+				$results = null;
+				if ($query->result()) {
 
-			$results = null;
-			if ($query->result()) {
-
-				foreach ($query->result() as $row) {
-					$vendor = [
-						'id' => $row->id,
-						'name' => $row->company_name,
-						'agent' => [
-							'name' => $row->agent_name,
-							'phoneNumber' => $row->agent_number
-						],
-						'driver' => [
-							'name' => $row->driver_name,
-							'phoneNumber' => $row->driver_number
-						],
-						'orders' => [
-							'phoneNumber' => $row->orders_number,
-							'minimum' => $row->minimum_order,
-							'days' => json_decode($row->orders_days),
-							'hours' => json_decode($row->orders_hours)
-						],
-						'discount' => $row->discount
-					];
+					foreach ($query->result() as $row) {
+						$vendor = [
+							'id' => $row->id,
+							'name' => $row->company_name,
+							'agent' => [
+								'name' => $row->agent_name,
+								'phoneNumber' => $row->agent_number
+							],
+							'driver' => [
+								'name' => $row->driver_name,
+								'phoneNumber' => $row->driver_number
+							],
+							'orders' => [
+								'phoneNumber' => $row->orders_number,
+								'minimum' => $row->minimum_order,
+								'days' => json_decode($row->orders_days),
+								'hours' => json_decode($row->orders_hours)
+							],
+							'discount' => $row->discount
+						];
+					}
+					$results['vendor'] = $vendor;
 				}
-				$results['vendor'] = $vendor;
+			}else{
+				$sql = "SELECT company_name FROM vendors WHERE id = (" . $conn->db->escape($id) . ")";
+				$query = $conn->db->query($sql);
+				return $query->result()[0]->company_name;
 			}
 		}
 		return $results;
@@ -103,12 +108,18 @@ class Place {
 		return $query;
 	}
 
-	static function getProductsByVendor($id) {
+	static function getProductsByVendor($id, $file = null) {
 		$conn = validConnection();
 		$conn->load->database();
 
-		$sql = "SELECT * FROM products WHERE vendorId = (" . $conn->db->escape($id) . ")";
+		$sqlFields = !isset($file) ? "*" : "name AS 'מוצר', price AS 'מחיר', weight AS 'משקל/יחידה'";
+
+		$sql = "SELECT {$sqlFields} FROM products WHERE vendorId = (" . $conn->db->escape($id) . ")";
+
 		$query = $conn->db->query($sql);
+
+		if (isset($file))
+			return $query;
 
 		$results = null;
 		if ($query->result()) {
@@ -122,6 +133,7 @@ class Place {
 					'vendorId' => $row->vendorId
 				];
 			}
+
 			$results['products'] = $products;
 		}
 

@@ -145,6 +145,21 @@ function productsCtrl($scope, $state, $timeout, dbModel, products) {
         $scope.cleanForm = !$scope.newProduct;
     }, true);
 
+    $scope.file = function () {
+        dbModel.getFile($scope.activeVendorId)
+            .then(function (data) {
+                var file = new Blob([data.data], {type: 'application/vnd.ms-excel'});
+                var fileName = $scope.$parent.vendors[$scope.activeVendorId].name;
+                fileName += "-סחורה-" + new Date().getTime();
+                saveAs(file, fileName + '.xls');
+                }
+            )
+            .catch(function (err) {
+                    console.log(err);
+                }
+            );
+    };
+
     /*var continueWithoutSaving = function () {
         var clean = true;
         if (($scope.newProducts.length > 0 || $scope.productsEditCount > 0) || ($scope.newReceipts.length > 0 || $scope.receiptsEditCount > 0))

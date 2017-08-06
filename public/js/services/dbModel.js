@@ -5,59 +5,62 @@
 dddatner.service("dbModel", ["$http", dbModelFunction]);
 
 function dbModelFunction($http) {
-    var urlBase = '/dddatner/';
+    var api = '/dddatner/';
 
     return {
         getOut: function(){
-            return $http.get(urlBase + "home/getOut/");
+            return $http.get(api + "home/getOut/");
         },
         getLocation: function () {
-            return $http.get(urlBase + "home/getLocation/");
+            return $http.get(api + "home/getLocation/");
         },
         setLocation: function (location) {
-            return $http.post(urlBase + "home/setLocation/", location);
+            return $http.post(api + "home/setLocation/", location);
         },
         getVendors: function () {
-            return $http.get(urlBase + "vendors/getVendors");
+            return $http.get(api + "vendors/getVendors");
         },
         getVendor: function (id) {
-            return $http.get(urlBase + "vendors/getVendor/" + id);
+            return $http.get(api + "vendors/getVendor/" + id);
         },
         addVendor: function (data) {
-            return $http.post(urlBase + "vendors/addVendor/" , data);
+            return $http.post(api + "vendors/addVendor/" , data);
         },
         updateVendor: function (data) {
-            return $http.post(urlBase + "vendors/updateVendor/" , data);
+            return $http.post(api + "vendors/updateVendor/" , data);
         },
         getProductsByVendor: function (id) {
-            return $http.get(urlBase + "vendors/getProductsByVendor/" + id);
+            return $http.get(api + "vendors/getProductsByVendor/" + id);
         },
         addProducts: function (data) {
-            return $http.post(urlBase + "vendors/addProducts/" , data);
+            return $http.post(api + "vendors/addProducts/" , data);
         },
         getReceiptsByVendor: function (id, month) {
-            return $http.get(urlBase + "vendors/getReceiptsByVendor/" + id + "/" + month.month + "/" + month.year);
+            return $http.get(api + "vendors/getReceiptsByVendor/" + id + "/" + month.month + "/" + month.year);
         },
         addReceipts: function (data) {
-            return $http.post(urlBase + "vendors/addReceipts/" , data);
+            return $http.post(api + "vendors/addReceipts/" , data);
         },
         removeReceipt: function (id) {
-            return $http.get(urlBase + "vendors/removeReceipt/" + id);
+            return $http.get(api + "vendors/removeReceipt/" + id);
         },
         closeMonth: function (data) {
-            return $http.post(urlBase + "vendors/closeMonth/" , data);
+            return $http.post(api + "vendors/closeMonth/" , data);
         },
         getHistory: function (id) {
-            return $http.get(urlBase + "vendors/getHistory/" + id);
+            return $http.get(api + "vendors/getHistory/" + id);
         },
         saveRecord: function (data){
-            return $http.post(urlBase + "inventory/saveRecord/" , data);
+            return $http.post(api + "inventory/saveRecord/" , data);
         },
         getVendorInventory: function (id, month, year){
-            return $http.get(urlBase + "inventory/getVendorInventory/" + id + "/" + month + "/" + year);
+            return $http.get(api + "inventory/getVendorInventory/" + id + "/" + month + "/" + year);
         },
         getEntries: function (){
-            return $http.get(urlBase + "inventory/getEntries");
+            return $http.get(api + "inventory/getEntries");
+        },
+        getFile: function (vendorId) {
+            return $http.get(api + "excelFile/index/" + vendorId, {responseType:'arraybuffer'});
         }
     };
 }
