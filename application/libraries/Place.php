@@ -574,8 +574,8 @@ SQL;
 				endforeach;
 				$sqlString = rtrim($sqlString, ', ');
 				$ids = [];
-				foreach ($items as $entry) :
-					$ids[] = "'{$entry -> itemEntryId}'";
+				foreach ($items as $item) :
+					$ids[] = "'{$item -> itemEntryId}'";
 				endforeach;
 				$ids = implode(",", $ids);
 				$sqlString .= " WHERE id in ({$ids});";
