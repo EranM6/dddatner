@@ -170,4 +170,26 @@ class Vendors extends CI_Controller {
 	public function getHistory($id){
 		echo json_encode($this->place->getHistory($id));
 	}
+
+	public function getProductsFile($id) {
+		$file = createSingleSheetExcelFile("products", $id);
+
+		// Sending headers to force the user to download the file
+		header('Content-Type: application/vnd.ms-excel');
+		header('Content-Disposition: attachment;filename="' . $file["name"] . '"');
+		header('Cache-Control: max-age=0');
+
+		echo json_encode(['name' => $file["name"], 'file' => $file["file"]->save('php://output')]);
+	}
+
+	public function getReceiptsFile($id, $month, $year) {
+		$file = createSingleSheetExcelFile("receipts", $id, $month, $year);
+
+		// Sending headers to force the user to download the file
+		header('Content-Type: application/vnd.ms-excel');
+		header('Content-Disposition: attachment;filename="' . $file["name"] . '"');
+		header('Cache-Control: max-age=0');
+
+		echo json_encode(['name' => $file["name"], 'file' => $file["file"]->save('php://output')]);
+	}
 }

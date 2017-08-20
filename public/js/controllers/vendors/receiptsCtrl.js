@@ -436,6 +436,21 @@ function receiptsCtrl($scope, $timeout, dbModel, holder, receipts) {
         opened: false
     };
 
+    $scope.file = function () {
+        dbModel.getReceiptsFile($scope.activeVendorId, $scope.selectedMonth)
+            .then(function (data) {
+                    var file = new Blob([data.data], {type: 'application/vnd.ms-excel'});
+                    var fileName = $scope.$parent.vendors[$scope.activeVendorId].name;
+                    fileName += "-תעודות-" + new Date().getTime();
+                    saveAs(file, fileName + '.xls');
+                }
+            )
+            .catch(function (err) {
+                    console.log(err);
+                }
+            );
+    };
+
     var tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     var afterTomorrow = new Date();

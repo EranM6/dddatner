@@ -146,7 +146,7 @@ function productsCtrl($scope, $state, $timeout, dbModel, products) {
     }, true);
 
     $scope.file = function () {
-        dbModel.getFile($scope.activeVendorId)
+        dbModel.getProductsFile($scope.activeVendorId)
             .then(function (data) {
                 var file = new Blob([data.data], {type: 'application/vnd.ms-excel'});
                 var fileName = $scope.$parent.vendors[$scope.activeVendorId].name;

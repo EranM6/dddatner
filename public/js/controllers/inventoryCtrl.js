@@ -122,6 +122,34 @@ function inventoryCtrl($scope, $stateParams, $state, dbModel, holder, vendors, e
         return true;
     };
 
+    $scope.monthFile = function (month, year) {
+        dbModel.getEntriesFile(month, year)
+            .then(function (data) {
+                    var file = new Blob([data.data], {type: 'application/vnd.ms-excel'});
+                    var fileName = "-ספירות-" + new Date().getTime();
+                    saveAs(file, fileName + '.xls');
+                }
+            )
+            .catch(function (err) {
+                    console.log(err);
+                }
+            );
+    };
+
+    $scope.vendorFile = function (id) {
+        dbModel.getEntryFile(id)
+            .then(function (data) {
+                    var file = new Blob([data.data], {type: 'application/vnd.ms-excel'});
+                    var fileName = "-ספירות-" + new Date().getTime();
+                    saveAs(file, fileName + '.xls');
+                }
+            )
+            .catch(function (err) {
+                    console.log(err);
+                }
+            );
+    };
+
     $scope.today = function() {
         $scope.dt = new Date();
     };

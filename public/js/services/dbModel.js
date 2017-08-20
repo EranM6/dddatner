@@ -35,6 +35,9 @@ function dbModelFunction($http) {
         addProducts: function (data) {
             return $http.post(api + "vendors/addProducts/" , data);
         },
+        getProductsFile: function (vendorId) {
+            return $http.get(api + "vendors/getProductsFile/" + vendorId, {responseType:'arraybuffer'});
+        },
         getReceiptsByVendor: function (id, month) {
             return $http.get(api + "vendors/getReceiptsByVendor/" + id + "/" + month.month + "/" + month.year);
         },
@@ -43,6 +46,9 @@ function dbModelFunction($http) {
         },
         removeReceipt: function (id) {
             return $http.get(api + "vendors/removeReceipt/" + id);
+        },
+        getReceiptsFile: function (vendorId, month) {
+            return $http.get(api + "vendors/getReceiptsFile/" + vendorId + "/" + month.month + "/" + month.year, {responseType:'arraybuffer'});
         },
         closeMonth: function (data) {
             return $http.post(api + "vendors/closeMonth/" , data);
@@ -59,8 +65,11 @@ function dbModelFunction($http) {
         getEntries: function (){
             return $http.get(api + "inventory/getEntries");
         },
-        getFile: function (vendorId) {
-            return $http.get(api + "excelFile/index/" + vendorId, {responseType:'arraybuffer'});
+        getEntryFile: function (entryId) {
+            return $http.get(api + "inventory/getEntryFile/" + entryId, {responseType:'arraybuffer'});
+        },
+        getEntriesFile: function (month, year) {
+            return $http.get(api + "inventory/getEntriesFile/"  + month + "/" + year, {responseType:'arraybuffer'});
         }
     };
 }

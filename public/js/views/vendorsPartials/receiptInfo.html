@@ -8,10 +8,11 @@
     </div>
 </div>
 <div class="row receiptsBar">
+    <excel-button-directive class="col-sm-2"></excel-button-directive>
     <div class="col-md-2 col-sm-1">
         <button type="button" class="btn btn-primary" ng-click="getReceiptsByVendor(selectedMonth.month + 1)" ng-disabled="selectedMonth.year >= today.getFullYear() && selectedMonth.month >= today.getMonth() +1"><span class="glyphicon glyphicon-menu-left"></span></button>
     </div>
-    <p class="col-md-8 col-sm-10">{{ selectedMonth.month | monthName }} {{ selectedMonth.year }}</p>
+    <p class="col-md-6 col-sm-8">{{ selectedMonth.month | monthName }} {{ selectedMonth.year }}</p>
     <div class="col-md-2 col-sm-1">
         <button type="button" class="btn btn-primary" ng-click="getReceiptsByVendor(selectedMonth.month - 1)"><span class="glyphicon glyphicon-menu-right"><a href="#"></a></span></button>
     </div>
