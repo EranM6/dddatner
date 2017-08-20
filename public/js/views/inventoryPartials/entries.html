@@ -4,21 +4,32 @@
         <li ng-repeat="(year,months) in records | orderObjectBy:year:true" class="year">
             <h2>{{ years[year] }}</h2>
             <div ng-repeat="(key, month) in months" class="month">
-                <h3>{{ key | monthName }}</h3>
+                <h3>{{ key | monthName }}
+                    <button class="btn btn-sm btn-success pull-left" ng-click="monthFile(key, years[year])">
+                        <img src="https://cdn3.iconfinder.com/data/icons/document-icons-2/30/647708-excel-128.png" style="width: 2rem; margin-left: 1rem;"/>
+                        הורד לאקסל
+                    </button>
+                </h3>
                 <table class="table table-bordered table-hover table-condensed table-responsive row">
                     <thead>
                     <tr>
                         <th>ספק</th>
                         <th>סה"כ</th>
                         <th>סגור</th>
+                        <th>הורד לאקסל</th>
                     </tr>
                     </thead>
                     <tbody>
-                    <tr ng-repeat="vendor in month | orderObjectBy: 'vendorName'">
-                        <td>{{ vendor.vendorName }}</td>
-                        <td>{{ vendor.total | number:2 }}</td>
+                    <tr ng-repeat="enrty in month | orderObjectBy: 'vendorName'">
+                        <td>{{ enrty.vendorName }}</td>
+                        <td>{{ enrty.total | number:2 }}</td>
                         <td>
-                            <span class="glyphicon" ng-class="{'approved glyphicon-ok': vendor.close == '1', 'notApproved glyphicon-remove': vendor.close == '0'}"></span>
+                            <span class="glyphicon" ng-class="{'approved glyphicon-ok': enrty.close == '1', 'notApproved glyphicon-remove': enrty.close == '0'}"></span>
+                        </td>
+                        <td>
+                            <button class="btn btn-xs btn-success" ng-click="vendorFile(enrty.id)">
+                                <img src="https://cdn3.iconfinder.com/data/icons/document-icons-2/30/647708-excel-128.png" style="width: 2rem;"/>
+                            </button>
                         </td>
                     </tr>
                     </tbody>

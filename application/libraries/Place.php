@@ -3,14 +3,16 @@
 
 class Place {
 
-	static function getPlaces($name = null) {
+	static function getPlaces($name = null, $id = null) {
 		$conn = validConnection();
 		$conn->load->database();
 
-		if (!isset($name)) {
-			$sql = "SELECT * FROM places";
-		} else {
+		if (isset($name)) {
 			$sql = "SELECT * FROM places WHERE eng_name = '{$name}'";
+		}elseif (isset($id)) {
+			$sql = "SELECT * FROM places WHERE id = '{$id}'";
+		} else {
+			$sql = "SELECT * FROM places";
 		}
 
 		$query = $conn->db->query($sql);
@@ -29,7 +31,7 @@ class Place {
 		return $results;
 	}
 
-	static function getVendors($id = null) {
+	static function getVendors($id = null, $file = false) {
 		$conn = validConnection();
 		$conn->load->database();
 		if (!isset($id)) {
@@ -50,35 +52,40 @@ class Place {
 				$results['vendors'] = $vendors;
 			}
 		} else {
+			if (!$file) {
+				$sql = "SELECT * FROM vendors WHERE id = (" . $conn->db->escape($id) . ")";
+				$query = $conn->db->query($sql);
 
-			$sql = "SELECT * FROM vendors WHERE id = (" . $conn->db->escape($id) . ")";
-			$query = $conn->db->query($sql);
+				$results = null;
+				if ($query->result()) {
 
-			$results = null;
-			if ($query->result()) {
-
-				foreach ($query->result() as $row) {
-					$vendor = [
-						'id' => $row->id,
-						'name' => $row->company_name,
-						'agent' => [
-							'name' => $row->agent_name,
-							'phoneNumber' => $row->agent_number
-						],
-						'driver' => [
-							'name' => $row->driver_name,
-							'phoneNumber' => $row->driver_number
-						],
-						'orders' => [
-							'phoneNumber' => $row->orders_number,
-							'minimum' => $row->minimum_order,
-							'days' => json_decode($row->orders_days),
-							'hours' => json_decode($row->orders_hours)
-						],
-						'discount' => $row->discount
-					];
+					foreach ($query->result() as $row) {
+						$vendor = [
+							'id' => $row->id,
+							'name' => $row->company_name,
+							'agent' => [
+								'name' => $row->agent_name,
+								'phoneNumber' => $row->agent_number
+							],
+							'driver' => [
+								'name' => $row->driver_name,
+								'phoneNumber' => $row->driver_number
+							],
+							'orders' => [
+								'phoneNumber' => $row->orders_number,
+								'minimum' => $row->minimum_order,
+								'days' => json_decode($row->orders_days),
+								'hours' => json_decode($row->orders_hours)
+							],
+							'discount' => $row->discount
+						];
+					}
+					$results['vendor'] = $vendor;
 				}
-				$results['vendor'] = $vendor;
+			}else{
+				$sql = "SELECT company_name FROM vendors WHERE id = (" . $conn->db->escape($id) . ")";
+				$query = $conn->db->query($sql);
+				return $query->result()[0]->company_name;
 			}
 		}
 		return $results;
@@ -103,12 +110,18 @@ class Place {
 		return $query;
 	}
 
-	static function getProductsByVendor($id) {
+	static function getProductsByVendor($id, $file = false) {
 		$conn = validConnection();
 		$conn->load->database();
 
-		$sql = "SELECT * FROM products WHERE vendorId = (" . $conn->db->escape($id) . ")";
+		$sqlFields = !$file ? "*" : "name AS 'מוצר', price AS 'מחיר', weight AS 'משקל/יחידה'";
+
+		$sql = "SELECT {$sqlFields} FROM products WHERE vendorId = (" . $conn->db->escape($id) . ")";
+
 		$query = $conn->db->query($sql);
+
+		if ($file)
+			return $query;
 
 		$results = null;
 		if ($query->result()) {
@@ -122,6 +135,7 @@ class Place {
 					'vendorId' => $row->vendorId
 				];
 			}
+
 			$results['products'] = $products;
 		}
 
@@ -155,15 +169,24 @@ class Place {
 		return $result;
 	}
 
-	static function getReceiptsByVendor($id, $month, $year) {
+	static function getReceiptsByVendor($id, $month, $year, $file = false) {
 		$conn = validConnection();
 		$conn->load->database();
 		$placeId = getLocation();
 
+		$sqlFields = !$file ?
+			"*, DATE_FORMAT(`date`, '%d/%m/%Y') AS formattedDate" :
+			"DATE_FORMAT(`date`,
+			 '%d/%m/%Y') AS 'תאריך',
+			  serial AS 'חשבונית/תעודה',
+			   amount AS 'סכום',
+			    charge AS 'חיוב/זיכוי',
+			     comment AS 'הערה'";
+
 		$receiptsQuery =
 			<<<SQL
 SELECT 
-	*, DATE_FORMAT(`date`, '%d/%m/%Y') AS formattedDate
+	{$sqlFields}
 FROM 
 	receipts
 WHERE 
@@ -183,6 +206,8 @@ SQL;
 
 		$query = $conn->db->query($receiptsQuery);
 
+		if ($file)
+			return $query;
 
 		$results = null;
 		if ($query->result()) {
@@ -574,8 +599,8 @@ SQL;
 				endforeach;
 				$sqlString = rtrim($sqlString, ', ');
 				$ids = [];
-				foreach ($items as $entry) :
-					$ids[] = "'{$entry -> itemEntryId}'";
+				foreach ($items as $item) :
+					$ids[] = "'{$item -> itemEntryId}'";
 				endforeach;
 				$ids = implode(",", $ids);
 				$sqlString .= " WHERE id in ({$ids});";
@@ -639,6 +664,119 @@ SQL;
 			$results['records'] = $entries;
 		}
 
+		return $results;
+	}
+
+	static function getEntryItems($entryId, $file = false){
+		$conn = validConnection();
+		$conn->load->database();
+
+		$sqlFields = !$file ?
+			"name, inventory_items.price, weight, amount" :
+			"name AS 'מוצר',
+			  inventory_items.price AS 'מחיר',
+			   weight AS 'קילו/יחידה',
+			    amount AS 'כמות'";
+
+		$sql = <<<SQL
+SELECT
+  {$sqlFields}
+FROM inventory_items
+  JOIN products ON products.id = itemId
+WHERE entryId = {$entryId}
+ORDER BY `name`;
+SQL;
+
+		$query = $conn->db->query($sql);
+
+		if ($file)
+			return $query;
+
+		$results = null;
+		if ($query->result()) {
+			$entries = null;
+			foreach ($query->result() as $row) {
+				$entries[$row->year][$row->month][$row->vendorName] = [
+					'name' => $row->name,
+					'price' => $row->price,
+					'month' => $row->month,
+					'measurement' => $row->weight,
+					'amount' => $row->amount
+				];
+			}
+			$results['records'] = $entries;
+		}
+
+		return $results;
+	}
+
+	static function getEntryById($entryId, $file = false){
+		$conn = validConnection();
+		$conn->load->database();
+
+		$sql = <<<SQL
+SELECT
+  heb_name AS place, company_name AS vendor, month, year, total
+FROM inventory_entry
+JOIN places ON places.id = placeId
+  JOIN vendors ON vendors.id = vendorId
+WHERE inventory_entry.id = {$entryId};
+SQL;
+
+		$query = $conn->db->query($sql);
+
+		$entry = null;
+		if ($query->result()) {
+			foreach ($query->result() as $row) {
+				$entry = [
+					'place' => $row->place,
+					'vendor' => $row->vendor,
+					'month' => $row->month,
+					'year' => $row->year,
+					'total' => $row->total
+				];
+			}
+		}
+
+		return $entry;
+	}
+
+	static function getEntriesByDate($month, $year, $file = false) {
+		$conn = validConnection();
+		$conn->load->database();
+		$placeId = getLocation();
+
+		$sqlFields = !$file ?
+			"name, inventory_items.price, weight, amount, company_name" :
+			"name                  AS 'מוצר',
+			 inventory_items.price AS 'מחיר',
+  			 weight                AS 'קילו/יחידה',
+  			 amount                AS 'כמות',
+  			 company_name";
+
+		$sql = <<<SQL
+SELECT
+  name, inventory_items.price, weight, amount, company_name
+FROM inventory_entry
+  JOIN inventory_items ON inventory_entry.id = entryId
+  JOIN products ON products.id = itemId
+  JOIN vendors ON vendors.id = inventory_entry.vendorId
+WHERE year = {$year} AND month = {$month} AND placeId = {$placeId};
+SQL;
+
+		$query = $conn->db->query($sql);
+
+		$results = null;
+		if ($query->result()) {
+			foreach ($query->result() as $row) {
+				$results[$row->company_name][] = [
+					'name' => $row->name,
+					'price' => $row->price,
+					'measurement' => $row->weight,
+					'amount' => $row->amount
+				];
+			}
+		}
 		return $results;
 	}
 }

@@ -7,7 +7,9 @@
         </div>
     </div>
 </div>
-<h1>קטלוג מוצרים / מחירון</h1>
+<h1>קטלוג מוצרים / מחירון
+    <excel-button-directive></excel-button-directive>
+</h1>
 <table class="table table-bordered table-hover table-condensed table-responsive row">
     <tr class="productElement col-md-4 col-sm-12" ng-repeat="(key, product) in vendorProducts | orderObjectBy:'name'" ng-class="{edited: editedProducts[product.id]}">
         <td class="row clearfix" ng-if="!editedProducts[product.id]">
