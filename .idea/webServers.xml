@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="6db189fa-4223-4c17-b279-a968c1c51152" name="dddatner" url="http://ftp.byethost8.com">
+        <fileTransfer host="ftp.byethost8.com" port="21" rootFolder="/htdocs/dddatner">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" />
+          </advancedOptions>
+          <option name="port" value="21" />
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>
