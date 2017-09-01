@@ -42,7 +42,6 @@ function inventoryCtrl($scope, $stateParams, $state, dbModel, holder, vendors, e
         if (!$scope.inventoryObj || !$scope.inventoryObj[id])
             dbModel.getVendorInventory(id, $scope.inventoryDate.getMonth() + 1, $scope.inventoryDate.getFullYear())
                 .then(function(data){
-                    console.log("retrieving", data.data);
                     $scope.inventoryObj[id] = data.data.products;
                     $scope.amountPerVendor[id] = data.data.totalAmount || 0;
                     $scope.closedRecords[id] = Number(data.data.close);

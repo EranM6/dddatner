@@ -1,4 +1,4 @@
-var dddatner = angular.module('dddatner', ['ngRoute', 'ui.router', 'ngAnimate', 'ngMaterial', 'ui.bootstrap']);
+var dddatner = angular.module('dddatner', ['ngRaven', 'ngRoute', 'ui.router', 'ngAnimate', 'ngMaterial', 'ui.bootstrap']);
 
 dddatner.filter('capitalize', function () {
     return function (input, all) {
