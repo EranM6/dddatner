@@ -8,6 +8,10 @@ function homeCtrl($scope, $state, location, dbModel, holder, $timeout, $interval
 
     $scope.GOD = (location.data).length;
     $scope.location = location.data;
+    var user = $scope.GOD ? "Admin" : $scope.location.eng_name;
+    Raven.setUserContext({
+        user: user
+    });
 
     console.clear();
 
@@ -41,4 +45,6 @@ function homeCtrl($scope, $state, location, dbModel, holder, $timeout, $interval
 
             });
     };
+
+
 }

@@ -3,7 +3,8 @@
 
 class Place {
 
-	static function getPlaces($name = null, $id = null) {
+	static function getPlaces($name = null, $id = null)  {
+	    $sentry = getSentry();
 		$conn = validConnection();
 		$conn->load->database();
 
