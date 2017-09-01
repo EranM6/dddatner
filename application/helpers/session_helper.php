@@ -14,6 +14,21 @@ function loadSession(){
 function setUserSession(){
 	loadSession()->session->set_userdata(['user' => $_SERVER['REMOTE_USER']]);
 	setLocation($_SERVER['REMOTE_USER']);
+	setSentry();
+}
+
+function setSentry(){
+    require_once "./vendor/sentry/sentry/lib/Raven/Autoloader.php";
+    Raven_Autoloader::register();
+    Raven_Autoloader::autoload("Raven_Client");
+    $dsn = 'https://14c703f9fe024a05bf4818207219211a:ff81847a99b84ae1b1d5f87f62a3b6a6@sentry.io/210634';
+    $client = new Raven_Client($dsn);
+    $client->install();
+}
+
+function getSentry(){
+    setSentry();
+    return loadSession()->session->userdata('sentry');
 }
 
 function checkForUser(){
